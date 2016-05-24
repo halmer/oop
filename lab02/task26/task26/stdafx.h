@@ -6,8 +6,9 @@
 
 #include <map>
 #include <vector>
-#include <string>
 #include <queue>
+#include <algorithm>
+#include <string>
 #include <iostream>
 #include <fstream>
 #include <chrono>

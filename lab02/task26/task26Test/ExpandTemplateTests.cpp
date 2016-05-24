@@ -66,6 +66,9 @@ BOOST_FIXTURE_TEST_SUITE(Examples, ExpandTemplateFixture)
 	//примеры разных замен
 	BOOST_AUTO_TEST_CASE(_)
 	{
+		replaceMap = { { "abc", "aa" } ,{ "b", "bc" } };
+		CheckSuccessfulReplacement("ab", "abc");
+		
 		replaceMap = { {"abc", "aa"} , {"aaaa", "b"}};
 		CheckSuccessfulReplacement("abcaa", "aaaa");
 		

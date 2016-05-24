@@ -8,22 +8,11 @@ CExpandTemplate::CExpandTemplate()
 	, m_patterns{ " " }
 	, m_values{ " " }
 {
-	m_root = new Node;
-}
-
-CExpandTemplate::~CExpandTemplate()
-{
-	for (auto ptr : m_ptrVector)
-	{
-		delete ptr;
-	}
-
-	delete m_root;
 }
 
 void CExpandTemplate::AddReplaceMap(map<string, string> const & replaceMap)
 {
-	if (!m_ptrVector.empty())
+	if (!m_root.link.empty())
 	{
 		Reset();
 	}
@@ -35,16 +24,15 @@ void CExpandTemplate::AddReplaceMap(map<string, string> const & replaceMap)
 			continue;
 		}
 
-		Node * curNode = m_root;
+		Node * curNode = &m_root;
 		for (auto ch : item.first)
 		{
 			Node * sonNode = GetNodeLinkingChar(curNode, ch);
 			if (!sonNode)
 			{
-				m_ptrVector.push_back(new Node);
-				sonNode = m_ptrVector.back();
-				sonNode->suffix = curNode;
-				curNode->link[ch] = sonNode;
+				curNode->link.emplace(ch, Node());
+				curNode->link[ch].suffix = curNode;
+				sonNode = &curNode->link[ch];
 			}
 			curNode = sonNode;
 		}
@@ -57,24 +45,24 @@ void CExpandTemplate::AddReplaceMap(map<string, string> const & replaceMap)
 	CreateSuffixLink();
 }
 
-CExpandTemplate::Node * CExpandTemplate::GetNodeLinkingChar(Node const * node, char ch) const
+CExpandTemplate::Node * CExpandTemplate::GetNodeLinkingChar(Node * node, char ch) const
 {
 	auto it = node->link.find(ch);
-	return (it != node->link.end()) ? it->second : nullptr;
+	return (it != node->link.end()) ? &it->second : nullptr;
 }
 
 void CExpandTemplate::CreateSuffixLink()
 {
 	queue<Node*> queueNode;
-	queueNode.push(m_root);
+	queueNode.push(&m_root);
 	while (!queueNode.empty())
 	{
 		Node * curNode = queueNode.front();
 		queueNode.pop();
-		for (auto const & item : curNode->link)
+		for (auto & item : curNode->link)
 		{
 			char ch = item.first;
-			Node * sonNode = item.second;
+			Node * sonNode = &item.second;
 
 			Node * suffixNode = curNode->suffix;
 			while (suffixNode)
@@ -94,55 +82,90 @@ void CExpandTemplate::CreateSuffixLink()
 	}
 }
 
-vector<uint8_t> CExpandTemplate::FindAllReplacement(string const & str)
+void CExpandTemplate::FillingString(uint32_t viewerInd, uint32_t & pass, string const & tpl, string & resultStr)
 {
-	vector<uint8_t> replacement;
-	replacement.resize(str.size());
-
-	m_curState = m_root;
-	int curPosStr = 0;
-	for (auto ch : str)
+	if (pass == 0)
 	{
-		NextState(ch);
-		++curPosStr;
-		if (m_curState->numTerminal)
+		if (m_replacement[viewerInd] > 0)
 		{
-			replacement[curPosStr - m_patterns[m_curState->numTerminal].size()] = m_curState->numTerminal;
-		}
-
-		Node * termNode = m_curState->terminal;
-		while (termNode)
-		{
-			replacement[curPosStr - m_patterns[termNode->numTerminal].size()] = termNode->numTerminal;
-			termNode = termNode->terminal;
-		}
-	}
-	
-	return replacement;
-}
-
-string CExpandTemplate::Replace(string const & str)
-{
-	if (str.empty() || m_ptrVector.empty())
-	{
-		return str;
-	}
-
-	vector<uint8_t> replacement = FindAllReplacement(str);
-
-	string resultStr;
-	resultStr.reserve(str.size());
-	for (size_t i = 0; i < replacement.size();)
-	{
-		if (replacement[i])
-		{
-			resultStr += m_values[replacement[i]];
-			i += m_patterns[replacement[i]].size();
+			resultStr += m_values[m_replacement[viewerInd]];
+			pass = m_patterns[m_replacement[viewerInd]].size() - 1;
 		}
 		else
 		{
-			resultStr += str[i++];
+			resultStr += tpl[-m_replacement[viewerInd]];
 		}
+	}
+	else
+	{
+		--pass;
+	}
+}
+
+void CExpandTemplate::FindReplacement(uint32_t viewerInd, uint32_t viewerSize)
+{
+	Node * termNode = m_curState;
+	while (termNode)
+	{
+		uint32_t numPattern = termNode->numTerminal;
+		if (numPattern)
+		{
+			if ((viewerInd < m_patterns[numPattern].size()))
+			{
+				m_replacement[viewerSize + viewerInd - m_patterns[numPattern].size()] = numPattern;
+			}
+			else
+			{
+				m_replacement[viewerInd - m_patterns[numPattern].size()] = numPattern;
+			}
+		}
+
+		termNode = termNode->terminal;
+	}
+}
+
+string CExpandTemplate::Replace(string const & tpl)
+{
+	if (tpl.empty() || m_root.link.empty())
+	{
+		return tpl;
+	}
+
+	auto patternMaxSize = max_element(m_patterns.begin(), m_patterns.end(),
+		[](string const & lhs, string const & rhs){
+			return lhs.size() < rhs.size(); 
+	});
+	uint32_t viewerSize = min(patternMaxSize->size(), tpl.size());
+	m_replacement.resize(viewerSize);
+	m_curState = &m_root;
+	for (uint32_t i = 0; i < viewerSize; ++i)
+	{
+		NextState(tpl[i]);
+		m_replacement[i] = -static_cast<int>(i);
+		FindReplacement(i + 1, viewerSize);
+	}
+
+	uint32_t viewerInd = 0;
+	uint32_t pass = 0;
+	string resultStr;
+	resultStr.reserve(tpl.size());
+	for (uint32_t i = viewerSize; i < tpl.size(); ++i)
+	{
+		NextState(tpl[i]);
+		FillingString(viewerInd, pass, tpl, resultStr);
+		m_replacement[viewerInd] = -static_cast<int>(i);
+		FindReplacement(viewerInd + 1, viewerSize);
+		viewerInd = (viewerInd == viewerSize - 1) ? 0 : viewerInd + 1;
+	}
+
+	for (uint32_t i = viewerInd; i < viewerSize; ++i)
+	{
+		FillingString(i, pass, tpl, resultStr);
+	}
+
+	for (uint32_t i = 0; i < viewerInd; ++i)
+	{
+		FillingString(i, pass, tpl, resultStr);
 	}
 
 	return resultStr;
@@ -159,23 +182,15 @@ void CExpandTemplate::NextState(char ch)
 		}
 		m_curState = m_curState->suffix;
 	}
-	m_curState = m_root;
+	m_curState = &m_root;
 }
 
 void CExpandTemplate::Reset()
 {
-	for (auto item : m_ptrVector)
-	{
-		delete item;
-	}
-	m_ptrVector.clear();
-
-	delete m_root;
-	m_root = new Node;
-
+	m_root.link.clear();
 	m_curState = nullptr;
 	m_patterns.clear();
 	m_values.clear();
 	m_patterns.push_back(" ");
-	m_values.push_back(" ");
+	m_values.push_back(" ");	
 }

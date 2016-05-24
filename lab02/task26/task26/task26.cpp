@@ -19,7 +19,7 @@ int main(int argc, char * argv[])
 {
 	if (argc % 2 == 0 || argc < 3)
 	{
-		cout << "Usage: task26.exe <input file> <output file> [<param> <value> [<param> <value> …]]" << endl;
+		cout << "Usage: task26.exe <input file> <output file> [<param> <value> [<param> <value> ...]]" << endl;
 		return 1;
 	}
 
