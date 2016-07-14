@@ -171,7 +171,8 @@ static int Compare(CMyString const & lhs, CMyString const & rhs)
 	{
 		return cmp;
 	}
-
+	assert(cmp == 0);
+	assert(lhs.Size() != rhs.Size());
 	return (lhs.Size() > rhs.Size()) ? 1 : -1;
 }
 
