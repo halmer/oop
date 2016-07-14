@@ -475,8 +475,8 @@ BOOST_AUTO_TEST_SUITE(MyString)
 			BOOST_CHECK_EQUAL(myStr[2], 'z');
 			BOOST_CHECK_EQUAL(myStr, "abz");
 		}
-		//может быть выведена в выходной поток
-		BOOST_AUTO_TEST_CASE(can_be_output_to_output_stream)
+		//вывода в выходной поток
+		BOOST_AUTO_TEST_CASE(output_to_output_stream)
 		{
 			{
 				stringstream strm;
@@ -495,8 +495,8 @@ BOOST_AUTO_TEST_SUITE(MyString)
 				BOOST_CHECK_EQUAL(strm.str(), str);
 			}
 		}
-		//может быть введена из входного потока
-		BOOST_AUTO_TEST_CASE(can_be_entered_from_input_stream)
+		//ввода из входного потока
+		BOOST_AUTO_TEST_CASE(input_from_input_stream)
 		{
 			CMyString myStr;
 			{

@@ -1,6 +1,6 @@
 #pragma once
 
-class CMyString
+class CMyString : private std::allocator<char>
 {
 public:
 	class iterator : public std::iterator<std::random_access_iterator_tag, char>
@@ -76,7 +76,7 @@ public:
 	CMyString & operator=(CMyString const & rhs);
 	CMyString & operator=(CMyString && rhs) noexcept;
 	CMyString & operator+=(CMyString const & rhs);
-	friend CMyString const operator+(CMyString const & lhs, CMyString const & rhs);
+	friend CMyString operator+(CMyString const & lhs, CMyString const & rhs);
 	char & operator[](size_t index);
 	char const & operator[](size_t index) const;
 
@@ -100,8 +100,8 @@ public:
 private:
 	static CMyString Concat(CMyString const & lhs, CMyString const & rhs);
 	char * GetStringPtr(size_t offset = 0) const;
+	void DeleteString();
 
-	std::allocator<char> m_alloc;
 	char * m_first = nullptr;
 	size_t m_size = 0;
 };

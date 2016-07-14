@@ -16,7 +16,7 @@ CMyString::CMyString(char const * pStr, size_t size)
 {
 	if (size)
 	{
-		m_first = m_alloc.allocate(size + 1);
+		m_first = allocate(size + 1);
 		char * end = uninitialized_copy_n(pStr, size, m_first);
 		*end = 0;
 		m_size = size;
@@ -41,12 +41,17 @@ CMyString::CMyString(CMyString && other) noexcept
 	other.m_size = 0;
 }
 
-CMyString::~CMyString()
+void CMyString::DeleteString()
 {
 	if (m_first)
 	{
-		m_alloc.deallocate(m_first, m_size + 1);
+		deallocate(m_first, m_size + 1);
 	}
+}
+
+CMyString::~CMyString()
+{
+	DeleteString();
 }
 
 size_t CMyString::Size() const
@@ -56,6 +61,7 @@ size_t CMyString::Size() const
 
 char * CMyString::GetStringPtr(size_t offset) const
 {
+	assert(offset <= m_size);
 	return m_first ? (m_first + offset) : "";
 }
 
@@ -79,7 +85,7 @@ void CMyString::Clear()
 {
 	if (m_first)
 	{
-		this->~CMyString();
+		DeleteString();
 		m_first = nullptr;
 		m_size = 0;
 	}
@@ -101,7 +107,7 @@ CMyString & CMyString::operator=(CMyString && rhs) noexcept
 {
 	if (this != &rhs)
 	{
-		this->~CMyString();
+		DeleteString();
 		m_first = rhs.m_first;
 		m_size = rhs.m_size;
 		rhs.m_first = nullptr;
@@ -113,13 +119,15 @@ CMyString & CMyString::operator=(CMyString && rhs) noexcept
 
 CMyString CMyString::Concat(CMyString const & lhs, CMyString const & rhs)
 {
+	assert(lhs.Size() || rhs.Size());
+
 	CMyString res;
 	res.m_size = lhs.Size() + rhs.Size();
-	char * tmp = res.m_alloc.allocate(res.m_size + 1);
-	char * end = uninitialized_copy_n(lhs.Data(), lhs.Size(), tmp);
+	char * begin = res.allocate(res.m_size + 1);
+	char * end = uninitialized_copy_n(lhs.Data(), lhs.Size(), begin);
 	end = uninitialized_copy_n(rhs.Data(), rhs.Size(), end);
 	*end = 0;
-	res.m_first = tmp;
+	res.m_first = begin;
 
 	return res;
 }
@@ -134,7 +142,7 @@ CMyString & CMyString::operator+=(CMyString const & rhs)
 	return *this;
 }
 
-CMyString const operator+(CMyString const & lhs, CMyString const & rhs)
+CMyString operator+(CMyString const & lhs, CMyString const & rhs)
 {
 	if (lhs.Size() && rhs.Size())
 	{
@@ -146,25 +154,20 @@ CMyString const operator+(CMyString const & lhs, CMyString const & rhs)
 
 char & CMyString::operator[](size_t index)
 {
-	assert(index < m_size);
+	assert(index <= m_size);
 	return m_first[index];
 }
 
 char const & CMyString::operator[](size_t index) const
 {
-	assert(index < m_size);
+	assert(index <= m_size);
 	return m_first[index];
 }
 
 static int Compare(CMyString const & lhs, CMyString const & rhs)
 {
-	if (lhs.Size() == rhs.Size())
-	{
-		return memcmp(lhs.Data(), rhs.Data(), rhs.Size());
-	}
-
 	int cmp = memcmp(lhs.Data(), rhs.Data(), min(lhs.Size(), rhs.Size()));
-	if (cmp != 0)
+	if (cmp != 0 || lhs.Size() == rhs.Size())
 	{
 		return cmp;
 	}
@@ -174,12 +177,17 @@ static int Compare(CMyString const & lhs, CMyString const & rhs)
 
 bool operator==(CMyString const & lhs, CMyString const & rhs)
 {
-	return (Compare(lhs, rhs) == 0);
+	if (lhs.Size() == rhs.Size())
+	{
+		return (Compare(lhs, rhs) == 0);
+	}
+	
+	return false;
 }
 
 bool operator!=(CMyString const & lhs, CMyString const & rhs)
 {
-	return (Compare(lhs, rhs) != 0);
+	return !(lhs == rhs);
 }
 
 bool operator<(CMyString const & lhs, CMyString const & rhs)
@@ -211,22 +219,7 @@ ostream & operator<<(ostream & os, CMyString const & myStr)
 istream & operator>>(istream & is, CMyString & myStr)
 {
 	string str;
-	bool isFoundChar = false;
-	for (char ch; !is.eof() && !is.fail() && is.get(ch);)
-	{
-		if (isspace(ch))
-		{
-			if (isFoundChar)
-			{
-				break;
-			}
-		}
-		else
-		{
-			str += ch;
-			isFoundChar = true;
-		}
-	}
+	is >> str;
 	myStr = str;
 
 	return is;
@@ -299,7 +292,7 @@ CMyString::iterator::iterator(char * ptr)
 
 char & CMyString::iterator::operator*() const
 {
-	assert(m_ptr != nullptr);
+	assert(m_ptr);
 	return *m_ptr;
 }
 
@@ -408,7 +401,7 @@ CMyString::const_iterator::const_iterator(char const * ptr)
 
 char const & CMyString::const_iterator::operator*() const
 {
-	assert(m_ptr != nullptr);
+	assert(m_ptr);
 	return *m_ptr;
 }
 
