@@ -22,7 +22,35 @@ BEGIN_MESSAGE_MAP(CPaintDoc, CDocument)
 END_MESSAGE_MAP()
 
 CPaintDoc::CPaintDoc()
+	: m_model(theApp.m_model)
+	, m_view(nullptr)
+	, m_writer(this)
+	, m_reader(this)
 {
+	m_model.DoOnAddShape(std::bind(&CPaintDoc::AddShape, this, placeholders::_1, placeholders::_2));
+	m_model.DoOnDeleteShape(std::bind(&CPaintDoc::DeleteShape, this, placeholders::_1));
+	m_model.DoOnDeleteAllShapes(std::bind(&CPaintDoc::DeleteShapes, this));
+	m_model.DoOnOffsetShape(std::bind(&CPaintDoc::ChangeShape, this, placeholders::_1, placeholders::_2));
+}
+
+void CPaintDoc::InitViewSignal(IPaintView * view)
+{
+	if (m_view)
+	{
+		return;
+	}
+
+	m_view = view;
+
+	m_view->DoOnButtonRectangle(std::bind(&CPaintDoc::CreateShape, this, ShapeType::Rectangle, placeholders::_1));
+	m_view->DoOnButtonTriangle(std::bind(&CPaintDoc::CreateShape, this, ShapeType::Triangle, placeholders::_1));
+	m_view->DoOnButtonEllipse(std::bind(&CPaintDoc::CreateShape, this, ShapeType::Ellipse, placeholders::_1));
+	m_view->DoOnShapeSelection(std::bind(&CPaintDoc::SetSelectedShape, this, placeholders::_1));
+	m_view->DoOnMouseMoveWithLButtonDown(std::bind(&CPaintDoc::OffsetShape, this, placeholders::_1, placeholders::_2));
+	m_view->DoOnLButtonUp(std::bind(&CPaintDoc::EndingOffsetShape, this, placeholders::_1));
+	m_view->DoOnButtonUndo(std::bind(&CPaintDoc::Undo, this));
+	m_view->DoOnButtonRedo(std::bind(&CPaintDoc::Redo, this));
+	m_view->DoOnKeyDeleteDown(std::bind(&CPaintDoc::DeleteSelectedShape, this));
 }
 
 CPaintDoc::~CPaintDoc()
@@ -34,9 +62,7 @@ BOOL CPaintDoc::OnNewDocument()
 	if (!CDocument::OnNewDocument())
 		return FALSE;
 
-	m_shapes.clear();
-	m_history.Reset();
-	UpdateAllViews(NULL, 1);
+	DeleteAllShapes();
 
 	return TRUE;
 }
@@ -45,223 +71,105 @@ void CPaintDoc::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		pugi::xml_document doc;
-		pugi::xml_node node = doc.append_child("Shapes");
-
-		for (auto const & shape : m_shapes)
-		{
-			CRect rect = shape->GetFrameRect();
-			rect.NormalizeRect();
-			pugi::xml_node param = node.append_child("Shape");
-			param.append_attribute("type") = shape->GetType().data();
-			param.append_attribute("left") = rect.left;
-			param.append_attribute("top") = rect.top;
-			param.append_attribute("right") = rect.right;
-			param.append_attribute("bottom") = rect.bottom;
-		}
-
-		stringstream strm;
-		doc.save(strm);
-		ar.Write(strm.str().data(), strm.str().size());
+		m_writer.WriteData(ar);
 	}
 	else
 	{
-		CFile * file = ar.GetFile();
-		pugi::xml_document doc;
-		if (!doc.load_file((LPCTSTR)file->GetFilePath()))//-V2005
-		{
-			return;
-		}
+		m_reader.ReadData(ar);
+		m_history.Reset();
 
-		pugi::xml_node shapes = doc.child("Shapes");
-		if (shapes)
-		{
-			m_shapes.clear();
-			m_history.Reset();
-		}
-
-		for (auto const & shape : shapes.children("Shape"))
-		{
-			stringstream strm;
-			strm <<
-				shape.attribute("type").value() << " " <<
-				shape.attribute("left").value() << " " <<
-				shape.attribute("top").value() << " " <<
-				shape.attribute("right").value() << " " <<
-				shape.attribute("bottom").value();
-			string type;
-			int left = 0, top = 0, right = 0, bottom = 0;
-			strm >> type >> left >> top >> right >> bottom;
-			if (strm)
-			{
-				if (type == "Rectangle")
-				{
-					CreateRectangle(CRect(left, top, right, bottom), false);
-				}
-				else if (type == "Triangle")
-				{
-					CreateTriangle(CRect(left, top, right, bottom), false);
-				}
-				else if (type == "Ellipse")
-				{
-					CreateEllipse(CRect(left, top, right, bottom), false);
-				}
-			}
-		}
-		UpdateAllViews(NULL, 1);
+		UpdateAllViews(NULL, REDRAW_UPDATESCROLL_RESETSELECT);
 	}
 }
 
-void CPaintDoc::CreateRectangle(CRect const & rect, bool useHistory /*= true*/)
+void CPaintDoc::CreateShape(ShapeType type, CRect const & rect)
 {
-	if (useHistory)
+	shared_ptr<CShape> shape;
+	if (type == ShapeType::Rectangle)
 	{
-		m_history.AddCommandAndExecute({
-			bind(static_cast<void(CPaintDoc::*)(shared_ptr<CShape> const &)>(&CPaintDoc::Create), this, make_shared<CRectangle>(rect)),
-			bind(static_cast<void(CPaintDoc::*)()>(&CPaintDoc::Delete), this)
-		});
+		shape = make_shared<CRectangle>(rect);
+	}
+	else if (type == ShapeType::Triangle)
+	{
+		shape = make_shared<CTriangle>(rect);
+	}
+	else if (type == ShapeType::Ellipse)
+	{
+		shape = make_shared<CEllipse>(rect);
 	}
 	else
 	{
-		Create(make_shared<CRectangle>(rect));
+		return;
 	}
 
-	SetModifiedFlag();
-	UpdateAllViews(NULL);
+	m_history.AddCommand({
+		std::bind(&CModel::AddShape, &m_model, shape, boost::none),
+		std::bind(&CModel::DeleteShape, &m_model, boost::none)
+	});
+
+	m_model.AddShape(shape, boost::none);
 }
 
-void CPaintDoc::CreateTriangle(CRect const & rect, bool useHistory /*= true*/)
+void CPaintDoc::OffsetSelectedShape(OffsetType type, CPoint const & delta)
 {
-	if (useHistory)
+	if (!m_selectedShape)
 	{
-		m_history.AddCommandAndExecute({
-			bind(static_cast<void(CPaintDoc::*)(shared_ptr<CShape> const &)>(&CPaintDoc::Create), this, make_shared<CTriangle>(rect)),
-			bind(static_cast<void(CPaintDoc::*)()>(&CPaintDoc::Delete), this)
-		});
+		return;
 	}
-	else
-	{
-		Create(make_shared<CTriangle>(rect));
-	}
+	
+	m_history.AddCommand({
+		std::bind(&CModel::OffsetShape, &m_model, m_selectedShape, delta, type),
+		std::bind(&CModel::OffsetShape, &m_model, m_selectedShape, -delta, type)
+	});
 
-	SetModifiedFlag();
-	UpdateAllViews(NULL);
+	m_model.OffsetShape(m_selectedShape, delta, type);
 }
 
-void CPaintDoc::CreateEllipse(CRect const & rect, bool useHistory /*= true*/)
+void CPaintDoc::DeleteSelectedShape()
 {
-	if (useHistory)
+	if (!m_selectedShape)
 	{
-		m_history.AddCommandAndExecute({
-			bind(static_cast<void(CPaintDoc::*)(shared_ptr<CShape> const &)>(&CPaintDoc::Create), this, make_shared<CEllipse>(rect)),
-			bind(static_cast<void(CPaintDoc::*)()>(&CPaintDoc::Delete), this)
-		});
+		return;
 	}
-	else
+	
+	auto it = find(m_shapes.begin(), m_shapes.end(), m_selectedShape);
+	if (it == m_shapes.end())
 	{
-		Create(make_shared<CEllipse>(rect));
+		return;
 	}
-
-	SetModifiedFlag();
-	UpdateAllViews(NULL);
-}
-
-void CPaintDoc::OffsetShape(shared_ptr<CShape> const & shape, CPoint const & delta, OffsetType type, bool useHistory /* = false*/)
-{
-	if (useHistory)
-	{
-		m_history.AddCommand({
-			bind(&CPaintDoc::Offset, this, shape, delta, type),
-			bind(&CPaintDoc::Offset, this, shape, -delta, type)
-		});
-	}
-	else
-	{
-		Offset(shape, delta, type);
-
-		SetModifiedFlag();
-		UpdateAllViews(NULL, 2);
-	}
-}
-
-void CPaintDoc::DeleteShape(shared_ptr<CShape> const & shape, bool useHistory /*= true*/)
-{
-	auto it = find(m_shapes.begin(), m_shapes.end(), shape);
 	size_t position = distance(m_shapes.begin(), it);
 
-	if (useHistory)
-	{
-		m_history.AddCommandAndExecute({
-			bind(static_cast<void(CPaintDoc::*)(size_t)>(&CPaintDoc::Delete), this, position),
-			bind(static_cast<void(CPaintDoc::*)(shared_ptr<CShape> const &, size_t)>(&CPaintDoc::Create), this, shape, position)
-		});
-	}
-	else
-	{
-		Delete(position);
-	}
+	m_history.AddCommand({
+		std::bind(&CModel::DeleteShape, &m_model, position),
+		std::bind(&CModel::AddShape, &m_model, m_selectedShape, position)
+	});
 
-	SetModifiedFlag();
-	UpdateAllViews(NULL, 1);
+	m_model.DeleteShape(position);
 }
 
-shared_ptr<CShape> CPaintDoc::GetShapeContainingPoint(CPoint const & point) const
+void CPaintDoc::DeleteAllShapes()
 {
-	for (auto const & shape : boost::adaptors::reverse(m_shapes))
-	{
-		if (shape && shape->IsPointInShape(point))
-		{
-			return shape;
-		}
-	}
-
-	return nullptr;
+	m_history.Reset();
+	m_model.DeleteAllShapes();
 }
 
-CRect CPaintDoc::GetFrameRectOfShape(std::shared_ptr<CShape> const & shape) const
+void CPaintDoc::SetSelectedShape(std::shared_ptr<CShape> const & shape)
 {
-	return shape->GetFrameRect();
-}
-
-function<void(CDC*)> CPaintDoc::DrawShapes() const
-{	
-	return [this](CDC * pDC) {
-		for (auto const & shape : m_shapes)
-		{
-			shape->DrawShape()(pDC);
-		}
-	};
-}
-
-CSize CPaintDoc::GetDocSize() const
-{
-	int maxRight = 0;
-	int maxBottom = 0;
-
-	for (auto const & shape : m_shapes)
-	{
-		CPoint point = shape->GetBottomRight();
-		maxRight = max(maxRight, point.x);
-		maxBottom = max(maxBottom, point.y);
-	}
-
-	return { maxRight, maxBottom };
+	m_selectedShape = shape;
 }
 
 void CPaintDoc::Undo()
 {
 	m_history.Undo();
 
-	SetModifiedFlag();
-	UpdateAllViews(NULL, 1);
+	SetModifiedFlagAndUpdateView(REDRAW_UPDATESCROLL_RESETSELECT);
 }
 
 void CPaintDoc::Redo()
 {
 	m_history.Redo();
 
-	SetModifiedFlag();
-	UpdateAllViews(NULL, 1);
+	SetModifiedFlagAndUpdateView(REDRAW_UPDATESCROLL_RESETSELECT);
 }
 
 bool CPaintDoc::CanUndo() const
@@ -274,29 +182,108 @@ bool CPaintDoc::CanRedo() const
 	return m_history.CanRedo();
 }
 
-void CPaintDoc::Create(shared_ptr<CShape> const & shape)
+vector<shared_ptr<CShape>> const & CPaintDoc::GetShapesData() const
 {
-	m_shapes.push_back(shape);
+	return m_shapes;
 }
 
-void CPaintDoc::Create(shared_ptr<CShape> const & shape, size_t position)
+void CPaintDoc::AddShape(std::shared_ptr<CShape> const & shape, boost::optional<size_t> position)
 {
-	m_shapes.insert(m_shapes.begin() + position, shape);
+	if (position)
+	{
+		assert(*position <= m_shapes.size());
+		m_shapes.insert(m_shapes.begin() + *position, shape);
+	}
+	else
+	{
+		m_shapes.push_back(shape);
+	}
+
+	SetModifiedFlagAndUpdateView(REDRAW_UPDATESCROLL);
 }
 
-void CPaintDoc::Delete()
+void CPaintDoc::DeleteShape(boost::optional<size_t> position)
 {
-	m_shapes.pop_back();
+	if (position)
+	{
+		assert(*position < m_shapes.size());
+		m_shapes.erase(m_shapes.begin() + *position);
+	}
+	else
+	{
+		m_shapes.pop_back();
+	}
+
+	SetModifiedFlagAndUpdateView(REDRAW_UPDATESCROLL_RESETSELECT);
 }
 
-void CPaintDoc::Delete(size_t position)
+void CPaintDoc::DeleteShapes()
 {
-	m_shapes.erase(m_shapes.begin() + position);
+	m_shapes.clear();
+
+	UpdateAllViews(NULL, REDRAW_UPDATESCROLL_RESETSELECT);
 }
 
-void CPaintDoc::Offset(shared_ptr<CShape> const & shape, CPoint const & delta, OffsetType type)
+void CPaintDoc::ChangeShape(std::shared_ptr<CShape> const & shape, size_t position)
 {
-	shape->Offset(delta, type);
+	assert(position < m_shapes.size());
+	m_shapes[position] = shape;
+
+	SetModifiedFlagAndUpdateView(REDRAW_UPDATESCROLL);
+}
+
+void CPaintDoc::OffsetShape(OffsetType type, CPoint const & currPoint)
+{
+	if (!m_lastPoint)
+	{
+		m_firstPoint = currPoint;
+		m_lastPoint = currPoint;
+	}
+
+	if (!m_offsetShape)
+	{
+		m_itSelectedShape = find(m_shapes.begin(), m_shapes.end(), m_selectedShape);
+		if (m_itSelectedShape == m_shapes.end())
+		{
+			return;
+		}
+
+		m_offsetShape = (*m_itSelectedShape)->Clone();
+		*m_itSelectedShape = m_offsetShape;
+		m_view->SetMovingShape(m_offsetShape);
+	}
+
+	m_offsetShape->Offset(currPoint - *m_lastPoint, type);
+	m_lastPoint = currPoint;
+
+	UpdateAllViews(NULL, REDRAW);
+}
+
+void CPaintDoc::EndingOffsetShape(OffsetType type)
+{
+	if (!m_offsetShape)
+	{
+		return;
+	}
+
+	if (*m_lastPoint != *m_firstPoint)
+	{
+		OffsetSelectedShape(type, *m_lastPoint - *m_firstPoint);
+	}
+	else
+	{
+		*m_itSelectedShape = m_selectedShape;
+	}
+
+	m_offsetShape = nullptr;
+	m_firstPoint = boost::none;
+	m_lastPoint = boost::none;
+}
+
+void CPaintDoc::SetModifiedFlagAndUpdateView(LPARAM lHint)
+{
+	SetModifiedFlag();
+	UpdateAllViews(NULL, lHint);
 }
 
 #ifdef _DEBUG

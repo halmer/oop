@@ -8,7 +8,8 @@ public:
 	
 	DrawCommand DrawShape() const override;
 	bool IsPointInShape(CPoint const & point) const override;
-	std::string GetType() const override;
+	ShapeType GetType() const override;
+	std::shared_ptr<CShape> Clone() const override;
 
 private:
 	mutable std::vector<CPoint> m_points;

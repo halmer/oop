@@ -31,7 +31,10 @@
 #endif
 #endif
 
+//#pragma comment (linker, "/SUBSYSTEM:CONSOLE")
+#pragma warning (disable: 4996)
 #include <vector>
+#include <map>
 #include <functional>
 #include <memory>
 #include <iostream>
@@ -39,4 +42,6 @@
 #include <algorithm>
 #include <boost/range/adaptor/reversed.hpp>
 #include <boost/optional.hpp>
+#include <boost/signals2.hpp>
 #include "pugixml.hpp"
+#include <cassert>

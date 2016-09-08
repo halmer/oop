@@ -2,7 +2,6 @@
 #include "Ellipse.h"
 
 using namespace std;
-using namespace std::placeholders;
 
 CEllipse::CEllipse(CRect const & rect)
 	: CShape(rect)
@@ -11,7 +10,7 @@ CEllipse::CEllipse(CRect const & rect)
 
 DrawCommand CEllipse::DrawShape() const
 {
-	return bind(static_cast<BOOL(CDC::*)(LPCRECT)>(&CDC::Ellipse), _1, cref(m_rect));
+	return bind(static_cast<BOOL(CDC::*)(LPCRECT)>(&CDC::Ellipse), placeholders::_1, cref(m_rect));
 }
 
 bool CEllipse::IsPointInShape(CPoint const & point) const
@@ -22,7 +21,12 @@ bool CEllipse::IsPointInShape(CPoint const & point) const
 	return rgn.PtInRegion(point) != 0;
 }
 
-string CEllipse::GetType() const
+ShapeType CEllipse::GetType() const
 {
-	return "Ellipse";
+	return ShapeType::Ellipse;
+}
+
+std::shared_ptr<CShape> CEllipse::Clone() const
+{
+	return make_shared<CEllipse>(*this);
 }

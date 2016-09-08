@@ -2,7 +2,6 @@
 #include "Triangle.h"
 
 using namespace std;
-using namespace std::placeholders;
 
 CTriangle::CTriangle(CRect const & rect)
 	: CShape(rect)
@@ -16,7 +15,7 @@ DrawCommand CTriangle::DrawShape() const
 	m_points.emplace_back((m_rect.left + m_rect.right) / 2, m_rect.top);
 	m_points.emplace_back(m_rect.right, m_rect.bottom);
 
-	return bind(&CDC::Polygon, _1, m_points.data(), m_points.size());
+	return bind(&CDC::Polygon, placeholders::_1, m_points.data(), m_points.size());
 }
 
 bool CTriangle::IsPointInShape(CPoint const & point) const
@@ -32,7 +31,12 @@ bool CTriangle::IsPointInShape(CPoint const & point) const
 	return rgn.PtInRegion(point) != 0;
 }
 
-string CTriangle::GetType() const
+ShapeType CTriangle::GetType() const
 {
-	return "Triangle";
+	return ShapeType::Triangle;
+}
+
+std::shared_ptr<CShape> CTriangle::Clone() const
+{
+	return make_shared<CTriangle>(*this);
 }

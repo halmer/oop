@@ -1,6 +1,10 @@
 #pragma once
 #include "Shape.h"
 #include "History.h"
+#include "Model.h"
+#include "IPaintView.h"
+#include "XmlWriter.h"
+#include "XmlReader.h"
 
 class CPaintDoc : public CDocument
 {
@@ -9,31 +13,43 @@ public:
 	virtual BOOL OnNewDocument();
 	virtual void Serialize(CArchive& ar);
 
-	void CreateRectangle(CRect const & rect, bool useHistory = true);
-	void CreateTriangle(CRect const & rect, bool useHistory = true);
-	void CreateEllipse(CRect const & rect, bool useHistory = true);
-	void OffsetShape(std::shared_ptr<CShape> const & shape, CPoint const & delta, OffsetType type, bool useHistory = false);
-	void DeleteShape(std::shared_ptr<CShape> const & shape, bool useHistory = true);
-	
-	std::shared_ptr<CShape> GetShapeContainingPoint(CPoint const & point) const;
-	CRect GetFrameRectOfShape(std::shared_ptr<CShape> const & shape) const;
-	std::function<void(CDC*)> DrawShapes() const;
-	CSize GetDocSize() const;
+	void InitViewSignal(IPaintView * view);
+
+	void CreateShape(ShapeType type, CRect const & rect);
+	void OffsetSelectedShape(OffsetType type, CPoint const & delta);
+	void DeleteSelectedShape();
+	void DeleteAllShapes();
+	void SetSelectedShape(std::shared_ptr<CShape> const & shape);
 
 	void Undo();
 	void Redo();
 	bool CanUndo() const;
 	bool CanRedo() const;
 
+	std::vector<std::shared_ptr<CShape>> const & GetShapesData() const;
+
 private:
-	void Create(std::shared_ptr<CShape> const & shape);
-	void Create(std::shared_ptr<CShape> const & shape, size_t position);
-	void Delete();
-	void Delete(size_t position);
-	void Offset(std::shared_ptr<CShape> const & shape, CPoint const & delta, OffsetType type);
+	void AddShape(std::shared_ptr<CShape> const & shape, boost::optional<size_t> position);
+	void DeleteShape(boost::optional<size_t> position);
+	void DeleteShapes();
+	void ChangeShape(std::shared_ptr<CShape> const & shape, size_t position);
 	
+	void OffsetShape(OffsetType type, CPoint const & currPoint);
+	void EndingOffsetShape(OffsetType type);
+	void SetModifiedFlagAndUpdateView(LPARAM lHint);
+
 	std::vector<std::shared_ptr<CShape>> m_shapes;
+	CModel & m_model;
+	IPaintView * m_view;
+	CXmlWriter m_writer;
+	CXmlReader m_reader;
 	CHistory m_history;
+	
+	std::shared_ptr<CShape> m_offsetShape;
+	std::shared_ptr<CShape> m_selectedShape;
+	boost::optional<CPoint> m_firstPoint;
+	boost::optional<CPoint> m_lastPoint;
+	std::vector<std::shared_ptr<CShape>>::iterator m_itSelectedShape;
 
 protected:
 	CPaintDoc();

@@ -5,6 +5,7 @@
 #endif
 
 #include "resource.h"
+#include "Model.h"
 
 class CPaintApp : public CWinAppEx
 {
@@ -16,6 +17,7 @@ public:
 	virtual void LoadCustomState();
 	virtual void SaveCustomState();
 	UINT m_nAppLook = 0;
+	CModel m_model;
 	afx_msg void OnAppAbout();
 	DECLARE_MESSAGE_MAP()
 };

@@ -10,6 +10,8 @@
 #define new DEBUG_NEW
 #endif
 
+using namespace std;
+
 const int WIDTH = 50;
 const int HEIGHT = 50;
 
@@ -39,7 +41,6 @@ CPaintView::CPaintView()
 	, m_cursorSizeAll(AfxGetApp()->LoadStandardCursor(IDC_SIZEALL))
 	, m_cursorSizeNWSE(AfxGetApp()->LoadStandardCursor(IDC_SIZENWSE))
 	, m_cursorSizeNESW(AfxGetApp()->LoadStandardCursor(IDC_SIZENESW))
-	, m_useHistory(false)
 {
 }
 
@@ -49,8 +50,16 @@ CPaintView::~CPaintView()
 
 void CPaintView::OnInitialUpdate()
 {
+	CPaintDoc * pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+	{
+		return;
+	}
+	
 	CScrollView::OnInitialUpdate();
-	SetScrollSizes(MM_TEXT, CSize(0, 0));
+	SetScroll();
+	pDoc->InitViewSignal(this);
 }
 
 BOOL CPaintView::PreCreateWindow(CREATESTRUCT& cs)
@@ -60,32 +69,50 @@ BOOL CPaintView::PreCreateWindow(CREATESTRUCT& cs)
 
 void CPaintView::OnUpdate(CView* /*pSender*/, LPARAM lHint, CObject* /*pHint*/)
 {
-	CPaintDoc * pDoc = GetDocument();
-	ASSERT_VALID(pDoc);
-	if (!pDoc)
+	switch (lHint)
 	{
-		return;
-	}
-
-	if (lHint == 0)
-	{
-		SetScrollSizes(MM_TEXT, pDoc->GetDocSize());
-	}
-	else if (lHint == 1)
-	{
+	case REDRAW_UPDATESCROLL:
+		SetScroll();
+		break;
+	case REDRAW_UPDATESCROLL_RESETSELECT:
+		SetScroll();
 		m_selectedShape = nullptr;
-		SetScrollSizes(MM_TEXT, pDoc->GetDocSize());
+		m_shapeSelection(m_selectedShape);
+		break;
+	case REDRAW:
+		break;
 	}
-
+	
 	Invalidate();
 }
+
+static map<ShapeType, function<void(CDC*, CRect)>> const drawingShapes{
+	{ ShapeType::Rectangle,
+		bind(static_cast<BOOL(CDC::*)(LPCRECT)>(&CDC::Rectangle), placeholders::_1, placeholders::_2)
+	},
+	{ ShapeType::Ellipse,
+		bind(static_cast<BOOL(CDC::*)(LPCRECT)>(&CDC::Ellipse), placeholders::_1, placeholders::_2)
+	},
+	{ ShapeType::Triangle,
+		[](CDC * pDC, CRect rect) {
+			vector<CPoint> points;
+			points.reserve(3);
+			points.emplace_back(rect.left, rect.bottom);
+			points.emplace_back((rect.left + rect.right) / 2, rect.top);
+			points.emplace_back(rect.right, rect.bottom);
+			pDC->Polygon(points.data(), points.size());
+		}
+	}
+};
 
 void CPaintView::OnDraw(CDC* pDC)
 {
 	CPaintDoc * pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
+	{
 		return;
+	}
 
 	CDC dcMem;
 	dcMem.CreateCompatibleDC(pDC);
@@ -102,13 +129,22 @@ void CPaintView::OnDraw(CDC* pDC)
 	CBitmap * oldBmp = dcMem.SelectObject(&bmpMem);
 
 	dcMem.FillSolidRect(clientRect, RGB(255, 255, 255));
-	pDoc->DrawShapes()(&dcMem);
+	auto & shapes = pDoc->GetShapesData();
+	for (auto const & shape : shapes)
+	{
+		auto it = drawingShapes.find(shape->GetType());
+		if (it != drawingShapes.end())
+		{
+			it->second(&dcMem, shape->GetFrameRect());
+		}
+	}
 	if (m_selectedShape)
 	{
 		m_frame.DrawFrame(&dcMem);
 	}
 
-	pDC->BitBlt(clientRect.left, clientRect.top, clientRect.Width(), clientRect.Height(), &dcMem, clientRect.left, clientRect.top, SRCCOPY);
+	pDC->BitBlt(clientRect.left, clientRect.top, clientRect.Width(), clientRect.Height(),
+				&dcMem, clientRect.left, clientRect.top, SRCCOPY);
 	
 	dcMem.SelectObject(oldPen);
 	dcMem.SelectObject(oldBrush);
@@ -129,135 +165,66 @@ void CPaintView::OnContextMenu(CWnd* /* pWnd */, CPoint point)
 }
 
 void CPaintView::OnButtonRectangle()
-{
-	CPaintDoc * pDoc = GetDocument();
-	ASSERT_VALID(pDoc);
-	if (!pDoc)
-	{
-		return;
-	}
-
-	pDoc->CreateRectangle(CRect(GetTopLeftForShape(), CSize(WIDTH, HEIGHT)));
+{	
+	m_createRectangle(GetRectInViewCenter());
 }
 
 void CPaintView::OnButtonTriangle()
-{
-	CPaintDoc * pDoc = GetDocument();
-	ASSERT_VALID(pDoc);
-	if (!pDoc)
-	{
-		return;
-	}
-
-	pDoc->CreateTriangle(CRect(GetTopLeftForShape(), CSize(WIDTH, HEIGHT)));
+{	
+	m_createTriangle(GetRectInViewCenter());
 }
 
 void CPaintView::OnButtonEllipse()
-{
-	CPaintDoc  * pDoc = GetDocument();
-	ASSERT_VALID(pDoc);
-	if (!pDoc)
-	{
-		return;
-	}
-
-	pDoc->CreateEllipse(CRect(GetTopLeftForShape(), CSize(WIDTH, HEIGHT)));
+{	
+	m_createEllipse(GetRectInViewCenter());
 }
 
 void CPaintView::OnButtonUndo()
 {
-	CPaintDoc * pDoc = GetDocument();
-	ASSERT_VALID(pDoc);
-	if (!pDoc)
-	{
-		return;
-	}
-
-	pDoc->Undo();
+	m_buttonUndo();
 }
 
 void CPaintView::OnButtonRedo()
 {
-	CPaintDoc * pDoc = GetDocument();
-	ASSERT_VALID(pDoc);
-	if (!pDoc)
-	{
-		return;
-	}
-
-	pDoc->Redo();
+	m_buttonRedo();
 }
 
 void CPaintView::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	CPaintDoc * pDoc = GetDocument();
-	ASSERT_VALID(pDoc);
-	if (!pDoc)
-	{
-		return;
-	}
-
 	SetCapture();
-
-	point.Offset(GetDeviceScrollPosition());
 
 	if (m_selectedShape && m_selectedMark)
 	{
 		return;
 	}
-	
-	m_selectedShape = m_selectedShapeWhenMoving;
+
+	point.Offset(GetDeviceScrollPosition());
+	m_selectedShape = GetShapeContainingPoint(point);
 	if (m_selectedShape)
 	{
-		m_frame.SetFrame(pDoc->GetFrameRectOfShape(m_selectedShape));
+		m_frame.SetFrame(m_selectedShape->GetFrameRect());
 	}
 
 	Invalidate();
-	
+
+	m_shapeSelection(m_selectedShape);
+
 	CScrollView::OnLButtonDown(nFlags, point);
 }
 
 void CPaintView::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	CPaintDoc * pDoc = GetDocument();
-	ASSERT_VALID(pDoc);
-	if (!pDoc)
-	{
-		return;
-	}
-
 	ReleaseCapture();
 
-	if (m_useHistory && (*m_lastPoint != *m_firstPoint))
-	{
-		if (m_selectedMark)
-		{
-			pDoc->OffsetShape(m_selectedShape, *m_lastPoint - *m_firstPoint, GetOffsetType(*m_selectedMark), m_useHistory);
-		}
-		else
-		{
-			pDoc->OffsetShape(m_selectedShape, *m_lastPoint - *m_firstPoint, OffsetType::AllSide, m_useHistory);
-		}
-	}
+	m_lButtonUp(GetOffsetType());
 
-	m_firstPoint = boost::none;
-	m_lastPoint = boost::none;
-	m_useHistory = false;
-
-	SetScrollSizes(MM_TEXT, pDoc->GetDocSize());
+	SetScroll();
 
 	CScrollView::OnLButtonUp(nFlags, point);
 }
 
 void CPaintView::OnMouseMove(UINT nFlags, CPoint currPoint)
-{
-	CPaintDoc * pDoc = GetDocument();
-	ASSERT_VALID(pDoc);
-	if (!pDoc)
-	{
-		return;
-	}
-		 
+{	 
 	currPoint.Offset(GetDeviceScrollPosition());
 	if (IsOverMaxPosition(currPoint))
 	{
@@ -266,32 +233,17 @@ void CPaintView::OnMouseMove(UINT nFlags, CPoint currPoint)
 
 	if (nFlags & MK_LBUTTON && (m_selectedMark || m_selectedShape))
 	{
-		if (!m_lastPoint)
-		{
-			m_firstPoint = currPoint;
-			m_lastPoint = currPoint;
-			m_useHistory = true;
-		}
+		m_offsetSelectedShape(GetOffsetType(), currPoint);
 
 		if (m_selectedMark)
 		{
-			pDoc->OffsetShape(m_selectedShape, currPoint - *m_lastPoint, GetOffsetType(*m_selectedMark));
 			ChangeCursor(true, true);
 		}
-		else
-		{
-			pDoc->OffsetShape(m_selectedShape, currPoint - *m_lastPoint, OffsetType::AllSide);
-		}
 
-		m_frame.SetFrame(pDoc->GetFrameRectOfShape(m_selectedShape));
-		m_lastPoint = currPoint;
+		m_frame.SetFrame(m_movingShape->GetFrameRect());
 	}
 	else
 	{
-		m_firstPoint = boost::none;
-		m_lastPoint = boost::none;
-		m_useHistory = false;
-		
 		SetAppCursor(currPoint);
 	}
 
@@ -305,19 +257,9 @@ BOOL CPaintView::OnEraseBkgnd(CDC* /*pDC*/)
 
 void CPaintView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	CPaintDoc * pDoc = GetDocument();
-	ASSERT_VALID(pDoc);
-	if (!pDoc)
-	{
-		return;
-	}
-
 	if (nChar == VK_DELETE)
 	{
-		if (m_selectedShape)
-		{
-			pDoc->DeleteShape(m_selectedShape);
-		}
+		m_keyDown();
 	}
 
 	CScrollView::OnKeyDown(nChar, nRepCnt, nFlags);
@@ -347,7 +289,7 @@ void CPaintView::OnUpdateButtonRedo(CCmdUI *pCmdUI)
 	pCmdUI->Enable(pDoc->CanRedo());
 }
 
-CPoint CPaintView::GetTopLeftForShape() const
+CRect CPaintView::GetRectInViewCenter() const
 {
 	CRect clientRect;
 	GetClientRect(&clientRect);
@@ -356,35 +298,31 @@ CPoint CPaintView::GetTopLeftForShape() const
 	CPoint point = clientRect.CenterPoint();
 	point.Offset(-WIDTH / 2, -HEIGHT / 2);
 
-	return point;
+	return { point, CSize(WIDTH, HEIGHT) };
 }
 
-OffsetType CPaintView::GetOffsetType(size_t frameMark) const
+OffsetType CPaintView::GetOffsetType() const
 {
-	switch (frameMark)
+	if (m_selectedMark)
 	{
-	case 0:
-		return OffsetType::TopLeft;
-	case 1:
-		return OffsetType::TopRight;
-	case 2:
-		return OffsetType::BottomLeft;
-	case 3:
-		return OffsetType::BottomRight;
-	default:
-		return OffsetType::AllSide;
+		switch (*m_selectedMark)
+		{
+		case 0:
+			return OffsetType::TopLeft;
+		case 1:
+			return OffsetType::TopRight;
+		case 2:
+			return OffsetType::BottomLeft;
+		case 3:
+			return OffsetType::BottomRight;
+		}
 	}
+
+	return OffsetType::AllSide;
 }
 
 void CPaintView::SetAppCursor(CPoint const & point)
 {
-	CPaintDoc * pDoc = GetDocument();
-	ASSERT_VALID(pDoc);
-	if (!pDoc)
-	{
-		return;
-	}
-
 	if (m_selectedShape)
 	{
 		m_selectedMark = m_frame.GetSelectedMark(point);
@@ -396,8 +334,7 @@ void CPaintView::SetAppCursor(CPoint const & point)
 
 	if (!m_selectedMark)
 	{
-		m_selectedShapeWhenMoving = pDoc->GetShapeContainingPoint(point);
-		if (m_selectedShapeWhenMoving)
+		if (GetShapeContainingPoint(point))
 		{
 			ChangeCursor(true, false);
 		}
@@ -415,26 +352,15 @@ void CPaintView::ChangeCursor(bool isSelectedShape, bool isSelectedMark)
 	{
 		if (*m_selectedMark == 0 || *m_selectedMark == 3)
 		{
-			if (m_frame.IsInvertedCursor())
-			{
-				SetCursor(m_cursorSizeNESW);
-
-			}
-			else
-			{
-				SetCursor(m_cursorSizeNWSE);
-			}
+			m_frame.IsInvertedCursor()
+				? SetCursor(m_cursorSizeNESW)
+				: SetCursor(m_cursorSizeNWSE);
 		}
 		else
 		{
-			if (m_frame.IsInvertedCursor())
-			{
-				SetCursor(m_cursorSizeNWSE);
-			}
-			else
-			{
-				SetCursor(m_cursorSizeNESW);
-			}
+			m_frame.IsInvertedCursor()
+				? SetCursor(m_cursorSizeNWSE)
+				: SetCursor(m_cursorSizeNESW);
 		}
 	}
 	else if (isSelectedShape && !isSelectedMark)
@@ -453,6 +379,7 @@ bool CPaintView::IsOverMaxPosition(CPoint const & point) const
 	GetClientRect(&clientRect);
 	clientRect.OffsetRect(GetDeviceScrollPosition());
 	CSize size = GetTotalSize();
+
 	int x = max(clientRect.right, size.cx);
 	int y = max(clientRect.bottom, size.cy);
 
@@ -462,6 +389,133 @@ bool CPaintView::IsOverMaxPosition(CPoint const & point) const
 	}
 
 	return false;
+}
+
+static map<ShapeType, function<bool(CRect const &, CPoint const &)>> const pointInShape{
+	{ ShapeType::Rectangle,
+		[](CRect const & rect, CPoint const & point) {
+			CRgn rgn;
+			rgn.CreateRectRgnIndirect(&rect);
+			return rgn.PtInRegion(point) != 0;
+		}
+	},
+	{ ShapeType::Ellipse,
+		[](CRect const & rect, CPoint const & point) {
+			CRgn rgn;
+			rgn.CreateEllipticRgnIndirect(&rect);
+			return rgn.PtInRegion(point) != 0;
+		}
+	},
+	{ ShapeType::Triangle,
+		[](CRect const & rect, CPoint const & point) {
+			vector<CPoint> points;
+			points.reserve(3);
+			points.emplace_back(rect.left, rect.bottom);
+			points.emplace_back((rect.left + rect.right) / 2, rect.top);
+			points.emplace_back(rect.right, rect.bottom);
+			CRgn rgn;
+			rgn.CreatePolygonRgn(points.data(), points.size(), WINDING);
+			return rgn.PtInRegion(point) != 0;
+		}
+	}
+};
+
+shared_ptr<CShape> CPaintView::GetShapeContainingPoint(CPoint const & point) const
+{
+	CPaintDoc * pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+	{
+		return nullptr;
+	}
+
+	auto & shapes = pDoc->GetShapesData();
+	for (auto const & shape : boost::adaptors::reverse(shapes))
+	{
+		auto it = pointInShape.find(shape->GetType());
+		if (it != pointInShape.end())
+		{
+			if (it->second(shape->GetFrameRect(), point))
+			{
+				return shape;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
+void CPaintView::SetScroll()
+{
+	CPaintDoc * pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+	{
+		return;
+	}
+
+	int maxRight = 0;
+	int maxBottom = 0;
+
+	auto & shapes = pDoc->GetShapesData();
+	for (auto const & shape : shapes)
+	{
+		CPoint point = shape->GetBottomRight();
+		maxRight = max(maxRight, point.x);
+		maxBottom = max(maxBottom, point.y);
+	}
+
+	SetScrollSizes(MM_TEXT, CSize(maxRight, maxBottom));
+}
+
+void CPaintView::SetMovingShape(shared_ptr<CShape> const & shape)
+{
+	m_movingShape = shape;
+}
+
+void CPaintView::DoOnButtonRectangle(CreateShapeSignal::slot_type const & slot)
+{
+	m_createRectangle.connect(slot);
+}
+
+void CPaintView::DoOnButtonTriangle(CreateShapeSignal::slot_type const & slot)
+{
+	m_createTriangle.connect(slot);
+}
+
+void CPaintView::DoOnButtonEllipse(CreateShapeSignal::slot_type const & slot)
+{
+	m_createEllipse.connect(slot);
+}
+
+void CPaintView::DoOnShapeSelection(ShapeSelectionSignal::slot_type const & slot)
+{
+	m_shapeSelection.connect(slot);
+}
+
+void CPaintView::DoOnMouseMoveWithLButtonDown(OffsetSelectedShapeSignal::slot_type const & slot)
+{
+	m_offsetSelectedShape.connect(slot);
+}
+
+void CPaintView::DoOnLButtonUp(LButtonUpSignal::slot_type const & slot)
+{
+	m_lButtonUp.connect(slot);
+}
+
+void CPaintView::DoOnButtonUndo(UndoRedoSignal::slot_type const & slot)
+{
+	m_buttonUndo.connect(slot);
+}
+
+void CPaintView::DoOnButtonRedo(UndoRedoSignal::slot_type const & slot)
+{
+	m_buttonRedo.connect(slot);
+}
+
+void CPaintView::DoOnKeyDeleteDown(KeyDeleteDownSignal::slot_type const & slot)
+{
+	m_keyDown.connect(slot);
 }
 
 #ifdef _DEBUG

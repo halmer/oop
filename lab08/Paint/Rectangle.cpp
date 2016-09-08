@@ -2,7 +2,6 @@
 #include "Rectangle.h"
 
 using namespace std;
-using namespace std::placeholders;
 
 CRectangle::CRectangle(CRect const & rect)
 	: CShape(rect)
@@ -11,7 +10,7 @@ CRectangle::CRectangle(CRect const & rect)
 
 DrawCommand CRectangle::DrawShape() const
 {
-	return bind(static_cast<BOOL(CDC::*)(LPCRECT)>(&CDC::Rectangle), _1, cref(m_rect));
+	return bind(static_cast<BOOL(CDC::*)(LPCRECT)>(&CDC::Rectangle), placeholders::_1, cref(m_rect));
 }
 
 bool CRectangle::IsPointInShape(CPoint const & point) const
@@ -22,7 +21,12 @@ bool CRectangle::IsPointInShape(CPoint const & point) const
 	return rgn.PtInRegion(point) != 0;
 }
 
-string CRectangle::GetType() const
+ShapeType CRectangle::GetType() const
 {
-	return "Rectangle";
+	return ShapeType::Rectangle;
+}
+
+std::shared_ptr<CShape> CRectangle::Clone() const
+{
+	return make_shared<CRectangle>(*this);
 }

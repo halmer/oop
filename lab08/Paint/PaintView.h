@@ -1,7 +1,8 @@
 #pragma once
 #include "Frame.h"
+#include "IPaintView.h"
 
-class CPaintView : public CScrollView
+class CPaintView : public CScrollView, IPaintView
 {	
 public:
 	virtual ~CPaintView();
@@ -32,12 +33,25 @@ protected:
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 
 private:
-	CPoint GetTopLeftForShape() const;
-	OffsetType GetOffsetType(size_t frameMark) const;
+	CRect GetRectInViewCenter() const;
+	OffsetType GetOffsetType() const;
 	void SetAppCursor(CPoint const & point);
 	void ChangeCursor(bool isSelectedShape, bool isSelectedMark);
 	bool IsOverMaxPosition(CPoint const & point) const;
-	
+	std::shared_ptr<CShape> GetShapeContainingPoint(CPoint const & point) const;
+	void SetScroll();
+	void SetMovingShape(std::shared_ptr<CShape> const & shape) override;
+
+	void DoOnButtonRectangle(CreateShapeSignal::slot_type const & slot) override;
+	void DoOnButtonTriangle(CreateShapeSignal::slot_type const & slot) override;
+	void DoOnButtonEllipse(CreateShapeSignal::slot_type const & slot) override;
+	void DoOnShapeSelection(ShapeSelectionSignal::slot_type const & slot) override;
+	void DoOnMouseMoveWithLButtonDown(OffsetSelectedShapeSignal::slot_type const & slot) override;
+	void DoOnLButtonUp(LButtonUpSignal::slot_type const & slot) override;
+	void DoOnButtonUndo(UndoRedoSignal::slot_type const & slot) override;
+	void DoOnButtonRedo(UndoRedoSignal::slot_type const & slot) override;
+	void DoOnKeyDeleteDown(KeyDeleteDownSignal::slot_type const & slot) override;
+
 	CPen m_pen;
 	CBrush m_brush;
 	HCURSOR m_cursorArrow;
@@ -45,14 +59,20 @@ private:
 	HCURSOR m_cursorSizeNWSE;
 	HCURSOR m_cursorSizeNESW;
 
-	boost::optional<CPoint> m_firstPoint;
-	boost::optional<CPoint> m_lastPoint;
-	bool m_useHistory;
-	
 	CFrame m_frame;
 	boost::optional<size_t> m_selectedMark;
 	std::shared_ptr<CShape> m_selectedShape;
-	std::shared_ptr<CShape> m_selectedShapeWhenMoving;
+	std::shared_ptr<CShape> m_movingShape;
+
+	CreateShapeSignal m_createRectangle;
+	CreateShapeSignal m_createTriangle;
+	CreateShapeSignal m_createEllipse;
+	ShapeSelectionSignal m_shapeSelection;
+	OffsetSelectedShapeSignal m_offsetSelectedShape;
+	LButtonUpSignal m_lButtonUp;
+	UndoRedoSignal m_buttonUndo;
+	UndoRedoSignal m_buttonRedo;
+	KeyDeleteDownSignal m_keyDown;
 
 public:
 #ifdef _DEBUG
