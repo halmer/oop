@@ -3,7 +3,7 @@
 
 using namespace std;
 
-const size_t NUMBUCKETS = 2000000;
+const size_t NUMBUCKETS = 10;
 const bool VARS = false;
 const bool FNS = true;
 
@@ -22,13 +22,12 @@ CCalcProcessor::Data::Data(idIterator lhs, idIterator rhs, function<double(doubl
 
 bool CCalcProcessor::CreateVar(string const & varId)
 {
-	auto it = m_symbolTable.lower_bound(varId);
-	if (it != m_symbolTable.end() && !(varId < it->first))
+	if (m_symbolTable.find(varId) != m_symbolTable.end())
 	{
 		return false;
 	}
 
-	m_symbolTable.emplace_hint(it, varId, Data());
+	m_symbolTable.emplace(varId, Data());
 	return true;
 }
 
@@ -50,8 +49,8 @@ bool CCalcProcessor::SetVar(string const & varId, double value)
 		val.reset();
 	}
 
-	auto it = m_symbolTable.lower_bound(varId);
-	if (it != m_symbolTable.end() && !(varId < it->first))
+	auto it = m_symbolTable.find(varId);
+	if (it != m_symbolTable.end())
 	{
 		if (it->second.fn)
 		{
@@ -61,7 +60,7 @@ bool CCalcProcessor::SetVar(string const & varId, double value)
 	}
 	else
 	{
-		m_symbolTable.emplace_hint(it, varId, Data({}, {}, {}, val));
+		m_symbolTable.emplace(varId, Data({}, {}, {}, val));
 	}
 	
 	return true;
@@ -69,8 +68,7 @@ bool CCalcProcessor::SetVar(string const & varId, double value)
 
 bool CCalcProcessor::CreateFn(string const & fnId, string const & id)
 {
-	auto itFnId = m_symbolTable.lower_bound(fnId);
-	if (itFnId != m_symbolTable.end() && !(fnId < itFnId->first))
+	if (m_symbolTable.find(fnId) != m_symbolTable.end())
 	{
 		return false;
 	}
@@ -81,14 +79,13 @@ bool CCalcProcessor::CreateFn(string const & fnId, string const & id)
 		return false;
 	}
 
-	m_symbolTable.emplace_hint(itFnId, fnId, Data(itId, itId, [](double x, double) { return x; }, {}));
+	m_symbolTable.emplace(fnId, Data(itId, itId, [](double x, double) { return x; }, {}));
 	return true;
 }
 
 bool CCalcProcessor::CreateFn(string const & fnId, string const & lhsId, string const & op, string const & rhsId)
 {
-	auto itFnId = m_symbolTable.lower_bound(fnId);
-	if (itFnId != m_symbolTable.end() && !(fnId < itFnId->first))
+	if (m_symbolTable.find(fnId) != m_symbolTable.end())
 	{
 		return false;
 	}
@@ -107,19 +104,19 @@ bool CCalcProcessor::CreateFn(string const & fnId, string const & lhsId, string 
 
 	if (op == "+")
 	{
-		m_symbolTable.emplace_hint(itFnId, fnId, Data(itLhsId, itRhsId, plus<double>(), {}));
+		m_symbolTable.emplace(fnId, Data(itLhsId, itRhsId, plus<double>(), {}));
 	}
 	else if (op == "-")
 	{
-		m_symbolTable.emplace_hint(itFnId, fnId, Data(itLhsId, itRhsId, minus<double>(), {}));
+		m_symbolTable.emplace(fnId, Data(itLhsId, itRhsId, minus<double>(), {}));
 	}
 	else if (op == "*")
 	{
-		m_symbolTable.emplace_hint(itFnId, fnId, Data(itLhsId, itRhsId, multiplies<double>(), {}));
+		m_symbolTable.emplace(fnId, Data(itLhsId, itRhsId, multiplies<double>(), {}));
 	}
 	else if (op == "/")
 	{
-		m_symbolTable.emplace_hint(itFnId, fnId, Data(itLhsId, itRhsId, divides<double>(), {}));
+		m_symbolTable.emplace(fnId, Data(itLhsId, itRhsId, divides<double>(), {}));
 	}
 
 	return true;
@@ -220,10 +217,10 @@ void CCalcProcessor::Calculate(unordered_set<string> & ids, string const & id) c
 		if ((*it)->lhs->second.fn)
 		{
 			string lhsId = (*it)->lhs->first;
-			auto itLhsId = ids.lower_bound(lhsId);
+			auto itLhsId = ids.find(lhsId);
 			if (itLhsId == ids.end() || lhsId != *itLhsId)
 			{
-				ids.emplace_hint(itLhsId, lhsId);
+				ids.emplace(lhsId);
 				idsData.push_back(&(*it)->lhs->second);
 			}
 		}
@@ -231,10 +228,10 @@ void CCalcProcessor::Calculate(unordered_set<string> & ids, string const & id) c
 		if ((*it)->rhs->second.fn)
 		{
 			string rhsId = (*it)->rhs->first;
-			auto itRhsId = ids.lower_bound(rhsId);
+			auto itRhsId = ids.find(rhsId);
 			if (itRhsId == ids.end() || rhsId != *itRhsId)
 			{
-				ids.emplace_hint(itRhsId, rhsId);
+				ids.emplace(rhsId);
 				idsData.push_back(&(*it)->rhs->second);
 			}
 		}

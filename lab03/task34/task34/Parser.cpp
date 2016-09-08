@@ -1,11 +1,10 @@
 #include "stdafx.h"
 #include "Parser.h"
-#include "Calculator.h"
 
 using namespace std;
 using namespace std::placeholders;
 
-CommandCalculator CParser::CreateCommand(string const & expr) const
+CalculatorCommand CParser::CreateCommand(string const & expr) const
 {
 	m_tokens = m_lexer.GetTokens(expr);
 
@@ -40,28 +39,28 @@ CommandCalculator CParser::CreateCommand(string const & expr) const
 	return {};
 }
 
-CommandCalculator CParser::OperatorVar() const
+CalculatorCommand CParser::OperatorVar() const
 {
 	if (m_tokens.size() == 2 && m_tokens[1].type == TokenType::Id)
 	{
-		return bind(&CCalculator::CreateVariable, _1, ref(m_tokens[1].value));
+		return bind(&ICommandContext::CreateVariable, _1, ref(m_tokens[1].value));
 	}
 
 	return {};
 }
 
-CommandCalculator CParser::OperatorLet() const
+CalculatorCommand CParser::OperatorLet() const
 {
 	if (m_tokens.size() == 3 && m_tokens[1].type == TokenType::Id)
 	{
 		if (m_tokens[2].type == TokenType::Id)
 		{
-			return bind(static_cast<void (CCalculator::*)(string const &, string const &)>(&CCalculator::SetVariable),
+			return bind(static_cast<void (ICommandContext::*)(string const &, string const &)>(&ICommandContext::SetVariable),
 				_1, ref(m_tokens[1].value), ref(m_tokens[2].value));
 		}
 		if (m_tokens[2].type == TokenType::Number)
 		{
-			return bind(static_cast<void (CCalculator::*)(string const &, double)>(&CCalculator::SetVariable),
+			return bind(static_cast<void (ICommandContext::*)(string const &, double)>(&ICommandContext::SetVariable),
 				_1, ref(m_tokens[1].value), stod(m_tokens[2].value));
 		}
 	}
@@ -69,13 +68,13 @@ CommandCalculator CParser::OperatorLet() const
 	return {};
 }
 
-CommandCalculator CParser::OperatorFn() const
+CalculatorCommand CParser::OperatorFn() const
 {
 	if (m_tokens.size() == 3
 		&& m_tokens[1].type == TokenType::Id
 		&& m_tokens[2].type == TokenType::Id)
 	{
-		return bind(static_cast<void (CCalculator::*)(string const &, string const &)>(&CCalculator::CreateFunction),
+		return bind(static_cast<void (ICommandContext::*)(string const &, string const &)>(&ICommandContext::CreateFunction),
 			_1, ref(m_tokens[1].value), ref(m_tokens[2].value));
 	}
 	if (m_tokens.size() == 5
@@ -84,38 +83,38 @@ CommandCalculator CParser::OperatorFn() const
 		&& m_tokens[3].type == TokenType::BinaryOperator
 		&& m_tokens[4].type == TokenType::Id)
 	{
-		return bind(static_cast<void (CCalculator::*)(string const &, string const &, string const &, string const &)>(&CCalculator::CreateFunction),
+		return bind(static_cast<void (ICommandContext::*)(string const &, string const &, string const &, string const &)>(&ICommandContext::CreateFunction),
 			_1, ref(m_tokens[1].value), ref(m_tokens[2].value), ref(m_tokens[3].value), ref(m_tokens[4].value));
 	}
 
 	return {};
 }
 
-CommandCalculator CParser::OperatorPrint() const
+CalculatorCommand CParser::OperatorPrint() const
 {
 	if (m_tokens.size() == 2 && m_tokens[1].type == TokenType::Id)
 	{
-		return bind(&CCalculator::PrintId, _1, ref(m_tokens[1].value));
+		return bind(&ICommandContext::PrintId, _1, ref(m_tokens[1].value));
 	}
 
 	return {};
 }
 
-CommandCalculator CParser::OperatorPrintvars() const
+CalculatorCommand CParser::OperatorPrintvars() const
 {
 	if (m_tokens.size() == 1)
 	{
-		return bind(&CCalculator::PrintVariables, _1);
+		return bind(&ICommandContext::PrintVariables, _1);
 	}
 
 	return {};
 }
 
-CommandCalculator CParser::OperatorPrintfns() const
+CalculatorCommand CParser::OperatorPrintfns() const
 {
 	if (m_tokens.size() == 1)
 	{
-		return bind(&CCalculator::PrintFunctions, _1);
+		return bind(&ICommandContext::PrintFunctions, _1);
 	}
 
 	return {};

@@ -1,21 +1,21 @@
 #pragma once
 #include "Lexer.h"
+#include "ICommandContext.h"
 
-class CCalculator;
-using CommandCalculator = std::function<void (CCalculator*)>;
+using CalculatorCommand = std::function<void(ICommandContext*)>;
 
 class CParser : boost::noncopyable
 {
 public:
-	CommandCalculator CreateCommand(std::string const & expr) const;
+	CalculatorCommand CreateCommand(std::string const & expr) const;
 	
 private:
-	CommandCalculator OperatorVar() const;
-	CommandCalculator OperatorLet() const;
-	CommandCalculator OperatorFn() const;
-	CommandCalculator OperatorPrint() const;
-	CommandCalculator OperatorPrintvars() const;
-	CommandCalculator OperatorPrintfns() const;
+	CalculatorCommand OperatorVar() const;
+	CalculatorCommand OperatorLet() const;
+	CalculatorCommand OperatorFn() const;
+	CalculatorCommand OperatorPrint() const;
+	CalculatorCommand OperatorPrintvars() const;
+	CalculatorCommand OperatorPrintfns() const;
 
 	CLexer m_lexer;
 	mutable std::vector<Token> m_tokens;

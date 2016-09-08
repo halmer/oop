@@ -707,7 +707,7 @@ BOOST_FIXTURE_TEST_SUITE(Calculator, Calculator_)
 		{
 			expr = R"(
 			let v0=0
-			let v1=1
+			let v1=1		
 			fn fib0=v0
 			fn fib1=v1
 			fn fib2=fib1+fib0

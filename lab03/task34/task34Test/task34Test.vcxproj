@@ -160,6 +160,7 @@
   <ItemGroup>
     <ClInclude Include="..\task34\CalcProcessor.h" />
     <ClInclude Include="..\task34\Calculator.h" />
+    <ClInclude Include="..\task34\ICommandContext.h" />
     <ClInclude Include="..\task34\Lexer.h" />
     <ClInclude Include="..\task34\Parser.h" />
     <ClInclude Include="stdafx.h" />
@@ -170,6 +171,7 @@
     <ClCompile Include="..\task34\Calculator.cpp" />
     <ClCompile Include="..\task34\Lexer.cpp" />
     <ClCompile Include="..\task34\Parser.cpp" />
+    <ClCompile Include="CalcProcessorTests.cpp" />
     <ClCompile Include="CalculatorTests.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

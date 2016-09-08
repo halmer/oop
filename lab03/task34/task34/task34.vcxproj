@@ -148,6 +148,7 @@
   <ItemGroup>
     <ClInclude Include="CalcProcessor.h" />
     <ClInclude Include="Calculator.h" />
+    <ClInclude Include="ICommandContext.h" />
     <ClInclude Include="Lexer.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="stdafx.h" />
