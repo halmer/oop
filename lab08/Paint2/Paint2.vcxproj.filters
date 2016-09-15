@@ -90,15 +90,6 @@
     <ClInclude Include="Shape.h">
       <Filter>DomainModel</Filter>
     </ClInclude>
-    <ClInclude Include="RectangleShape.h">
-      <Filter>DomainModel</Filter>
-    </ClInclude>
-    <ClInclude Include="TriangleShape.h">
-      <Filter>DomainModel</Filter>
-    </ClInclude>
-    <ClInclude Include="EllipseShape.h">
-      <Filter>DomainModel</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Paint2.cpp">
@@ -135,15 +126,6 @@
       <Filter>AppModel</Filter>
     </ClCompile>
     <ClCompile Include="Shape.cpp">
-      <Filter>DomainModel</Filter>
-    </ClCompile>
-    <ClCompile Include="RectangleShape.cpp">
-      <Filter>DomainModel</Filter>
-    </ClCompile>
-    <ClCompile Include="TriangleShape.cpp">
-      <Filter>DomainModel</Filter>
-    </ClCompile>
-    <ClCompile Include="EllipseShape.cpp">
       <Filter>DomainModel</Filter>
     </ClCompile>
   </ItemGroup>

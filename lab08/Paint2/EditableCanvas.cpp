@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "EditableCanvas.h"
-#include "RectangleShape.h"
-#include "TriangleShape.h"
-#include "EllipseShape.h"
+#include "Shape.h"
 #include "Selection.h"
 
 CEditableCanvas::CEditableCanvas(ICanvas & canvas, CHistory & history)
@@ -14,23 +12,7 @@ CEditableCanvas::CEditableCanvas(ICanvas & canvas, CHistory & history)
 
 void CEditableCanvas::AddShape(ShapeType type, CRect const & rect)
 {
-	std::shared_ptr<IShape> shape;
-	if (type == ShapeType::Rectangle)
-	{
-		shape = std::make_shared<CRectangleShape>(rect);
-	}
-	else if (type == ShapeType::Triangle)
-	{
-		shape = std::make_shared<CTriangleShape>(rect);
-	}
-	else if (type == ShapeType::Ellipse)
-	{
-		shape = std::make_shared<CEllipseShape>(rect);
-	}
-	else
-	{
-		return;
-	}
+	std::shared_ptr<IShape> shape = std::make_shared<CShape>(rect, type);
 
 	m_history.AddCommandAndExecute({
 		std::bind(&ICanvas::InsertShape, &m_canvas, shape, boost::none),

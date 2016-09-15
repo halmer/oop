@@ -1,8 +1,6 @@
 #include "stdafx.h"
-#include "../Paint2/RectangleShape.h"
-#include "../Paint2/TriangleShape.h"
-#include "../Paint2/EllipseShape.h"
 #include "../Paint2/Canvas.h"
+#include "../Paint2/Shape.h"
 
 using namespace std;
 
@@ -16,35 +14,13 @@ BOOST_FIXTURE_TEST_SUITE(DomainModelTests, DomainModelTests_)
 	//
 	BOOST_AUTO_TEST_CASE(rectangle)
 	{
-		CRectangleShape rectangle(rect0);
-		BOOST_CHECK_EQUAL(rectangle.GetRect(), rect0);
+		CShape shape(rect0, ShapeType::Triangle);
+		BOOST_CHECK_EQUAL(shape.GetRect(), rect0);
 		
-		rectangle.SetRect(rect15);
-		BOOST_CHECK_EQUAL(rectangle.GetRect(), rect15);
+		shape.SetRect(rect15);
+		BOOST_CHECK_EQUAL(shape.GetRect(), rect15);
 
-		BOOST_CHECK(rectangle.GetType() == ShapeType::Rectangle);
-	}
-	//
-	BOOST_AUTO_TEST_CASE(trianglePointer)
-	{
-		shared_ptr<IShape> triangle(new CTriangleShape(rect0));
-		BOOST_CHECK_EQUAL(triangle->GetRect(), rect0);
-
-		triangle->SetRect(rect15);
-		BOOST_CHECK_EQUAL(triangle->GetRect(), rect15);
-
-		BOOST_CHECK(triangle->GetType() == ShapeType::Triangle);
-	}
-	//
-	BOOST_AUTO_TEST_CASE(ellipsePointer)
-	{
-		shared_ptr<IShape> ellipse(new CEllipseShape(rect0));
-		BOOST_CHECK_EQUAL(ellipse->GetRect(), rect0);
-
-		ellipse->SetRect(rect15);
-		BOOST_CHECK_EQUAL(ellipse->GetRect(), rect15);
-
-		BOOST_CHECK(ellipse->GetType() == ShapeType::Ellipse);
+		BOOST_CHECK(shape.GetType() == ShapeType::Triangle);
 	}
 	//
 	BOOST_AUTO_TEST_CASE(canvasPointer)
@@ -52,9 +28,9 @@ BOOST_FIXTURE_TEST_SUITE(DomainModelTests, DomainModelTests_)
 		shared_ptr<ICanvas> canvas(new CCanvas());
 		BOOST_CHECK_EQUAL(canvas->GetShapeCount(), 0);
 
-		shared_ptr<IShape> rectangle(new CRectangleShape(rect15));
-		shared_ptr<IShape> triangle(new CTriangleShape(rect15));
-		shared_ptr<IShape> ellipse(new CEllipseShape(rect15));
+		auto rectangle = std::make_shared<CShape>(rect15, ShapeType::Rectangle);
+		auto triangle = std::make_shared<CShape>(rect15, ShapeType::Triangle);
+		auto ellipse = std::make_shared<CShape>(rect15, ShapeType::Ellipse);
 		canvas->InsertShape(rectangle, 0);
 		canvas->InsertShape(triangle, boost::none);
 		canvas->InsertShape(ellipse, 0);

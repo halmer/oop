@@ -1,9 +1,6 @@
 #include "stdafx.h"
 #include "Selection.h"
 #include "IShape.h"
-#include "RectangleShape.h"
-#include "TriangleShape.h"
-#include "EllipseShape.h"
 
 CSelection::CSelection(std::shared_ptr<IShape> const & shape)
 {

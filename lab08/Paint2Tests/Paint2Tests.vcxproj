@@ -175,10 +175,7 @@
     <ClInclude Include="..\Paint2\IEditableShape.h" />
     <ClInclude Include="..\Paint2\ISelection.h" />
     <ClInclude Include="..\Paint2\IShape.h" />
-    <ClInclude Include="..\Paint2\EllipseShape.h" />
-    <ClInclude Include="..\Paint2\RectangleShape.h" />
     <ClInclude Include="..\Paint2\Shape.h" />
-    <ClInclude Include="..\Paint2\TriangleShape.h" />
     <ClInclude Include="..\Paint2\Selection.h" />
     <ClInclude Include="..\Paint\History.h" />
     <ClInclude Include="stdafx.h" />
@@ -189,10 +186,7 @@
     <ClCompile Include="..\Paint2\EditableCanvas.cpp" />
     <ClCompile Include="..\Paint2\EditableRectangle.cpp" />
     <ClCompile Include="..\Paint2\EditableShape.cpp" />
-    <ClCompile Include="..\Paint2\EllipseShape.cpp" />
-    <ClCompile Include="..\Paint2\RectangleShape.cpp" />
     <ClCompile Include="..\Paint2\Shape.cpp" />
-    <ClCompile Include="..\Paint2\TriangleShape.cpp" />
     <ClCompile Include="..\Paint2\Selection.cpp" />
     <ClCompile Include="..\Paint\History.cpp" />
     <ClCompile Include="AppModelTests.cpp" />
