@@ -177,7 +177,7 @@
     <ClInclude Include="..\Paint2\IShape.h" />
     <ClInclude Include="..\Paint2\ModelEllipse.h" />
     <ClInclude Include="..\Paint2\ModelRectangle.h" />
-    <ClInclude Include="..\Paint2\ModelShape.h" />
+    <ClInclude Include="..\Paint2\Shape.h" />
     <ClInclude Include="..\Paint2\ModelTriangle.h" />
     <ClInclude Include="..\Paint2\Selection.h" />
     <ClInclude Include="..\Paint\History.h" />
@@ -191,7 +191,7 @@
     <ClCompile Include="..\Paint2\EditableShape.cpp" />
     <ClCompile Include="..\Paint2\ModelEllipse.cpp" />
     <ClCompile Include="..\Paint2\ModelRectangle.cpp" />
-    <ClCompile Include="..\Paint2\ModelShape.cpp" />
+    <ClCompile Include="..\Paint2\Shape.cpp" />
     <ClCompile Include="..\Paint2\ModelTriangle.cpp" />
     <ClCompile Include="..\Paint2\Selection.cpp" />
     <ClCompile Include="..\Paint\History.cpp" />

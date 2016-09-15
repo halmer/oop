@@ -26,7 +26,7 @@ std::shared_ptr<IShape> CSelection::GetShape()
 	return m_shape;
 }
 
-void CSelection::MoveControlPoint(SelectControlPointType type, CPoint const & coord)
+void CSelection::MoveControlPoint(SelectControlPointType /*type*/, CPoint const & /*coord*/)
 {
 
 }
@@ -50,3 +50,5 @@ void CSelection::DoOnShapeChange(ShapeChangeSignal::slot_type const & handler)
 {
 	m_shapeChange.connect(handler);
 }
+
+#pragma warning(disable:4503)

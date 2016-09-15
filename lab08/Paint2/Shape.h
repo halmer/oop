@@ -1,10 +1,10 @@
 #pragma once
 #include "IShape.h"
 
-class CModelShape : public IShape
+class CShape : public IShape
 {
 public:
-	CModelShape(CRect const & rect);
+	CShape(CRect const & rect);
 	void SetRect(CRect const & rect) override;
 	CRect GetRect() const override;
 

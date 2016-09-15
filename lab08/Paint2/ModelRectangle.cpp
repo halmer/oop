@@ -2,7 +2,7 @@
 #include "ModelRectangle.h"
 
 CModelRectangle::CModelRectangle(CRect const & rect)
-	: CModelShape(rect)
+	: CShape(rect)
 {
 }
 

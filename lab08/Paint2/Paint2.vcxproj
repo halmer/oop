@@ -194,7 +194,7 @@
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="ModelEllipse.h" />
     <ClInclude Include="ModelRectangle.h" />
-    <ClInclude Include="ModelShape.h" />
+    <ClInclude Include="Shape.h" />
     <ClInclude Include="ModelTriangle.h" />
     <ClInclude Include="Paint2.h" />
     <ClInclude Include="Paint2Doc.h" />
@@ -213,7 +213,7 @@
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="ModelEllipse.cpp" />
     <ClCompile Include="ModelRectangle.cpp" />
-    <ClCompile Include="ModelShape.cpp" />
+    <ClCompile Include="Shape.cpp" />
     <ClCompile Include="ModelTriangle.cpp" />
     <ClCompile Include="Paint2.cpp" />
     <ClCompile Include="Paint2Doc.cpp" />

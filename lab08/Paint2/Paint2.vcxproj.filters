@@ -63,9 +63,6 @@
     <ClInclude Include="ModelRectangle.h">
       <Filter>DomainModel</Filter>
     </ClInclude>
-    <ClInclude Include="ModelShape.h">
-      <Filter>DomainModel</Filter>
-    </ClInclude>
     <ClInclude Include="Canvas.h">
       <Filter>DomainModel</Filter>
     </ClInclude>
@@ -99,6 +96,9 @@
     <ClInclude Include="Selection.h">
       <Filter>AppModel</Filter>
     </ClInclude>
+    <ClInclude Include="Shape.h">
+      <Filter>DomainModel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Paint2.cpp">
@@ -117,9 +117,6 @@
       <Filter>View</Filter>
     </ClCompile>
     <ClCompile Include="ModelRectangle.cpp">
-      <Filter>DomainModel</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelShape.cpp">
       <Filter>DomainModel</Filter>
     </ClCompile>
     <ClCompile Include="ModelTriangle.cpp">
@@ -145,6 +142,9 @@
     </ClCompile>
     <ClCompile Include="Selection.cpp">
       <Filter>AppModel</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape.cpp">
+      <Filter>DomainModel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

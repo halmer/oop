@@ -2,7 +2,7 @@
 #include "ModelEllipse.h"
 
 CModelEllipse::CModelEllipse(CRect const & rect)
-	: CModelShape(rect)
+	: CShape(rect)
 {
 }
 

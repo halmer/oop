@@ -2,7 +2,7 @@
 #include "ModelTriangle.h"
 
 CModelTriangle::CModelTriangle(CRect const & rect)
-	: CModelShape(rect)
+	: CShape(rect)
 {
 }
 

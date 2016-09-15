@@ -1,7 +1,7 @@
 #pragma once
-#include "ModelShape.h"
+#include "Shape.h"
 
-class CModelRectangle : public CModelShape
+class CModelRectangle : public CShape
 {
 public:
 	CModelRectangle(CRect const & rect);

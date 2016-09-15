@@ -25,17 +25,6 @@ BOOST_FIXTURE_TEST_SUITE(DomainModelTests, DomainModelTests_)
 		BOOST_CHECK(rectangle.GetType() == ShapeType::Rectangle);
 	}
 	//
-	BOOST_AUTO_TEST_CASE(rectanglePointer)
-	{
-		shared_ptr<IShape> rectangle(new CModelRectangle(rect0));
-		BOOST_CHECK_EQUAL(rectangle->GetRect(), rect0);
-
-		rectangle->SetRect(rect15);
-		BOOST_CHECK_EQUAL(rectangle->GetRect(), rect15);
-
-		BOOST_CHECK(rectangle->GetType() == ShapeType::Rectangle);
-	}
-	//
 	BOOST_AUTO_TEST_CASE(trianglePointer)
 	{
 		shared_ptr<IShape> triangle(new CModelTriangle(rect0));
