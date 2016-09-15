@@ -1,23 +1,23 @@
 #include "stdafx.h"
 #include "Selection.h"
 #include "IShape.h"
-#include "ModelRectangle.h"
-#include "ModelTriangle.h"
-#include "ModelEllipse.h"
+#include "RectangleShape.h"
+#include "TriangleShape.h"
+#include "EllipseShape.h"
 
 CSelection::CSelection(std::shared_ptr<IShape> const & shape)
 {
 	if (shape->GetType() == ShapeType::Rectangle)
 	{
-		m_shape = std::make_shared<CModelRectangle>(shape->GetRect());
+		m_shape = std::make_shared<CRectangleShape>(shape->GetRect());
 	}
 	else if (shape->GetType() == ShapeType::Triangle)
 	{
-		m_shape = std::make_shared<CModelTriangle>(shape->GetRect());
+		m_shape = std::make_shared<CTriangleShape>(shape->GetRect());
 	}
 	else if (shape->GetType() == ShapeType::Ellipse)
 	{
-		m_shape = std::make_shared<CModelEllipse>(shape->GetRect());
+		m_shape = std::make_shared<CEllipseShape>(shape->GetRect());
 	}
 }
 

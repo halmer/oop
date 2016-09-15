@@ -1,9 +1,9 @@
 #pragma once
 #include "Shape.h"
 
-class CModelEllipse : public CShape
+class CTriangleShape : public CShape
 {
 public:
-	CModelEllipse(CRect const & rect);
+	CTriangleShape(CRect const & rect);
 	ShapeType GetType() const override;
 };

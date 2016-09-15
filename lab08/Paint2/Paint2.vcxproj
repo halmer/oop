@@ -192,10 +192,10 @@
     <ClInclude Include="IShape.h" />
     <ClInclude Include="IShapeView.h" />
     <ClInclude Include="MainFrm.h" />
-    <ClInclude Include="ModelEllipse.h" />
-    <ClInclude Include="ModelRectangle.h" />
+    <ClInclude Include="EllipseShape.h" />
+    <ClInclude Include="RectangleShape.h" />
     <ClInclude Include="Shape.h" />
-    <ClInclude Include="ModelTriangle.h" />
+    <ClInclude Include="TriangleShape.h" />
     <ClInclude Include="Paint2.h" />
     <ClInclude Include="Paint2Doc.h" />
     <ClInclude Include="Paint2View.h" />
@@ -211,10 +211,10 @@
     <ClCompile Include="EditableRectangle.cpp" />
     <ClCompile Include="EditableShape.cpp" />
     <ClCompile Include="MainFrm.cpp" />
-    <ClCompile Include="ModelEllipse.cpp" />
-    <ClCompile Include="ModelRectangle.cpp" />
+    <ClCompile Include="EllipseShape.cpp" />
+    <ClCompile Include="RectangleShape.cpp" />
     <ClCompile Include="Shape.cpp" />
-    <ClCompile Include="ModelTriangle.cpp" />
+    <ClCompile Include="TriangleShape.cpp" />
     <ClCompile Include="Paint2.cpp" />
     <ClCompile Include="Paint2Doc.cpp" />
     <ClCompile Include="Paint2View.cpp" />

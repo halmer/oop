@@ -60,16 +60,7 @@
     <ClInclude Include="IShape.h">
       <Filter>DomainModel</Filter>
     </ClInclude>
-    <ClInclude Include="ModelRectangle.h">
-      <Filter>DomainModel</Filter>
-    </ClInclude>
     <ClInclude Include="Canvas.h">
-      <Filter>DomainModel</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelTriangle.h">
-      <Filter>DomainModel</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelEllipse.h">
       <Filter>DomainModel</Filter>
     </ClInclude>
     <ClInclude Include="IEditableShape.h">
@@ -99,6 +90,15 @@
     <ClInclude Include="Shape.h">
       <Filter>DomainModel</Filter>
     </ClInclude>
+    <ClInclude Include="RectangleShape.h">
+      <Filter>DomainModel</Filter>
+    </ClInclude>
+    <ClInclude Include="TriangleShape.h">
+      <Filter>DomainModel</Filter>
+    </ClInclude>
+    <ClInclude Include="EllipseShape.h">
+      <Filter>DomainModel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Paint2.cpp">
@@ -115,15 +115,6 @@
     </ClCompile>
     <ClCompile Include="Paint2View.cpp">
       <Filter>View</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelRectangle.cpp">
-      <Filter>DomainModel</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelTriangle.cpp">
-      <Filter>DomainModel</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelEllipse.cpp">
-      <Filter>DomainModel</Filter>
     </ClCompile>
     <ClCompile Include="Canvas.cpp">
       <Filter>DomainModel</Filter>
@@ -144,6 +135,15 @@
       <Filter>AppModel</Filter>
     </ClCompile>
     <ClCompile Include="Shape.cpp">
+      <Filter>DomainModel</Filter>
+    </ClCompile>
+    <ClCompile Include="RectangleShape.cpp">
+      <Filter>DomainModel</Filter>
+    </ClCompile>
+    <ClCompile Include="TriangleShape.cpp">
+      <Filter>DomainModel</Filter>
+    </ClCompile>
+    <ClCompile Include="EllipseShape.cpp">
       <Filter>DomainModel</Filter>
     </ClCompile>
   </ItemGroup>
