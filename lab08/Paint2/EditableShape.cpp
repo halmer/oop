@@ -1,10 +1,16 @@
 #include "stdafx.h"
 #include "EditableShape.h"
+#include "..\paint\History.h"
 
-CEditableShape::CEditableShape(CRect const & rect, ShapeType type)
-	: m_rect(rect)
-	, m_type(type)
+CEditableShape::CEditableShape(const std::shared_ptr<IShape> & shape, CHistory & history)
+	: m_rect(shape->GetRect())
+	, m_shape(shape)
+	, m_history(history)
 {
+	shape->DoOnShapeChange([this](IShape const * shape) {
+		m_rect = shape->GetRect();
+		m_shapeChange(this);
+	});
 }
 
 void CEditableShape::SetRect(CRect const & rect)
@@ -45,17 +51,25 @@ CRect CEditableShape::GetRect() const
 
 ShapeType CEditableShape::GetType() const
 {
-	return m_type;
+	return m_shape->GetType();
 }
 
-void CEditableShape::Commit() const
+void CEditableShape::Commit()
 {
-	m_shapeChange(this);
+	auto oldRect = m_shape->GetRect();
+	if (m_rect != oldRect)
+	{
+		m_history.AddCommandAndExecute({
+			std::bind(&IShape::SetRect, m_shape, m_rect),
+			std::bind(&IShape::SetRect, m_shape, oldRect)
+		});
+		m_shapeChange(this);
+	}
 }
 
-void CEditableShape::DoOnShapeChange(ShapeChangeSignal::slot_type const & handler)
+boost::signals2::connection CEditableShape::DoOnShapeChange(ShapeChangeSignal::slot_type const & handler)
 {
-	m_shapeChange.connect(handler);
+	return m_shapeChange.connect(handler);
 }
 
 #pragma warning(disable:4503)

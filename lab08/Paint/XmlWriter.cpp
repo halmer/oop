@@ -39,5 +39,5 @@ void CXmlWriter::WriteData(CArchive & ar)
 
 	std::stringstream strm;
 	doc.save(strm);
-	ar.Write(strm.str().data(), strm.str().size());
+	ar.Write(strm.str().data(), boost::numeric_cast<UINT>(strm.str().size()));
 }

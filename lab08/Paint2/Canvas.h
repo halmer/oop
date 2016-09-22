@@ -11,19 +11,12 @@ public:
 
 	void DoOnInsertShape(InsertShapeSignal::slot_type const & handler) override;
 	void DoOnDeleteShape(DeleteShapeSignal::slot_type const & handler) override;
-	void DoOnChangeShape(ChangeShapeSignal::slot_type const & handler) override;
 
 private:
-	void ChangeShape(IShape const * shape);
 
-	struct Data
-	{
-		std::shared_ptr<IShape> shape;
-		boost::signals2::connection connection;
-	};
+	std::shared_ptr<IShape> shape;
 
-	std::vector<Data> m_shapes;
+	std::vector<std::shared_ptr<IShape>> m_shapes;
 	InsertShapeSignal m_insertShape;
 	DeleteShapeSignal m_deleteShape;
-	ChangeShapeSignal m_changeShape;
 };

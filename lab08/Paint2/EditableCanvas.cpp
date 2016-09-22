@@ -10,7 +10,6 @@ CEditableCanvas::CEditableCanvas(ICanvas & canvas, CHistory & history)
 {
 	m_canvas.DoOnInsertShape(std::bind(&CEditableCanvas::InsertShape, this, std::placeholders::_1, std::placeholders::_2));
 	m_canvas.DoOnDeleteShape(std::bind(&CEditableCanvas::DeleteShape, this, std::placeholders::_1));
-	m_canvas.DoOnChangeShape(std::bind(&CEditableCanvas::ChangeShape, this, std::placeholders::_1));
 }
 
 void CEditableCanvas::AddShape(ShapeType type, CRect const & rect)
@@ -91,7 +90,7 @@ void CEditableCanvas::DoOnChangeShape(ChangeShapeSignal::slot_type const & handl
 
 void CEditableCanvas::InsertShape(std::shared_ptr<IShape> const & shape, boost::optional<size_t> pos)
 {
-	std::shared_ptr<IEditableShape> editableShape = std::make_shared<CEditableShape>(shape->GetRect(), shape->GetType());
+	std::shared_ptr<IEditableShape> editableShape = std::make_shared<CEditableShape>(shape);
 	editableShape->DoOnShapeChange(std::bind(&CEditableCanvas::ChangeEditableShape, this, std::placeholders::_1));
 
 	if (pos)
@@ -123,20 +122,6 @@ void CEditableCanvas::DeleteShape(std::shared_ptr<IShape> const & shape)
 	m_deleteShape(it->editableShape);
 	
 	m_shapes.erase(it);
-}
-
-void CEditableCanvas::ChangeShape(std::shared_ptr<IShape> const & shape)
-{
-	auto it = find_if(m_shapes.begin(), m_shapes.end(),
-		[&shape](Data const & data) { return data.shape == shape; });
-	if (it == m_shapes.end())
-	{
-		return;
-	}
-
-	it->editableShape->SetRect(shape->GetRect());
-
-	m_changeShape(it->editableShape);
 }
 
 void CEditableCanvas::ChangeEditableShape(IEditableShape const * shape)

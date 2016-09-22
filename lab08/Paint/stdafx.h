@@ -43,5 +43,8 @@
 #include <boost/range/adaptor/reversed.hpp>
 #include <boost/optional.hpp>
 #include <boost/signals2.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 #include "pugixml.hpp"
 #include <cassert>
+
+#include <WinUser.h>

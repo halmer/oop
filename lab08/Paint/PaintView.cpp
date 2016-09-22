@@ -100,7 +100,7 @@ static map<ShapeType, function<void(CDC*, CRect)>> const drawingShapes{
 			points.emplace_back(rect.left, rect.bottom);
 			points.emplace_back((rect.left + rect.right) / 2, rect.top);
 			points.emplace_back(rect.right, rect.bottom);
-			pDC->Polygon(points.data(), points.size());
+			pDC->Polygon(points.data(), boost::numeric_cast<UINT>(points.size()));
 		}
 	}
 };
@@ -414,7 +414,7 @@ static map<ShapeType, function<bool(CRect const &, CPoint const &)>> const point
 			points.emplace_back((rect.left + rect.right) / 2, rect.top);
 			points.emplace_back(rect.right, rect.bottom);
 			CRgn rgn;
-			rgn.CreatePolygonRgn(points.data(), points.size(), WINDING);
+			rgn.CreatePolygonRgn(points.data(), boost::numeric_cast<int>(points.size()), WINDING);
 			return rgn.PtInRegion(point) != 0;
 		}
 	}

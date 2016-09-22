@@ -21,7 +21,6 @@ public:
 private:
 	void InsertShape(std::shared_ptr<IShape> const & shape, boost::optional<size_t> pos);
 	void DeleteShape(std::shared_ptr<IShape> const & shape);
-	void ChangeShape(std::shared_ptr<IShape> const & shape);
 	void ChangeEditableShape(IEditableShape const * shape);
 
 	struct Data

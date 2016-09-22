@@ -16,8 +16,5 @@ public:
 	using DeleteShapeSignal = boost::signals2::signal<void(std::shared_ptr<IShape> const & shape)>;
 	virtual void DoOnDeleteShape(DeleteShapeSignal::slot_type const & handler) = 0;
 
-	using ChangeShapeSignal = boost::signals2::signal<void(std::shared_ptr<IShape> const & shape)>;
-	virtual void DoOnChangeShape(ChangeShapeSignal::slot_type const & handler) = 0;
-
 	virtual ~ICanvas() = default;
 };

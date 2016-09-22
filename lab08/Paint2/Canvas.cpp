@@ -9,15 +9,13 @@ void CCanvas::InsertShape(std::shared_ptr<IShape> const & shape, boost::optional
 		return;
 	}
 	
-	auto connection = shape->DoOnShapeChange(std::bind(&CCanvas::ChangeShape, this, std::placeholders::_1));
-
 	if (pos)
 	{
-		m_shapes.insert(m_shapes.begin() + *pos, { shape, connection });
+		m_shapes.insert(m_shapes.begin() + *pos, shape);
 	}
 	else
 	{
-		m_shapes.push_back({ shape, connection });
+		m_shapes.push_back(shape);
 	}
 
 	
@@ -26,14 +24,12 @@ void CCanvas::InsertShape(std::shared_ptr<IShape> const & shape, boost::optional
 
 void CCanvas::DeleteShape(std::shared_ptr<IShape> const & shape)
 {
-	auto it = find_if(m_shapes.begin(), m_shapes.end(),
-		[&shape](Data const & data) { return data.shape == shape; });
+	auto it = find(m_shapes.begin(), m_shapes.end(), shape);
 	if (it == m_shapes.end())
 	{
 		return;
 	}
 	
-	it->connection.disconnect();
 	m_shapes.erase(it);
 	
 	m_deleteShape(shape);
@@ -46,12 +42,7 @@ size_t CCanvas::GetShapeCount() const
 
 std::shared_ptr<IShape> CCanvas::GetShapeAtIndex(size_t index) const
 {
-	if (index >= m_shapes.size())
-	{
-		return nullptr;
-	}
-
-	return m_shapes[index].shape;
+	return m_shapes.at(index);
 }
 
 void CCanvas::DoOnInsertShape(InsertShapeSignal::slot_type const & handler)
@@ -62,23 +53,6 @@ void CCanvas::DoOnInsertShape(InsertShapeSignal::slot_type const & handler)
 void CCanvas::DoOnDeleteShape(DeleteShapeSignal::slot_type const & handler)
 {
 	m_deleteShape.connect(handler);
-}
-
-void CCanvas::DoOnChangeShape(ChangeShapeSignal::slot_type const & handler)
-{
-	m_changeShape.connect(handler);
-}
-
-void CCanvas::ChangeShape(IShape const * shape)
-{
-	auto it = find_if(m_shapes.begin(), m_shapes.end(),
-		[&shape](Data const & data) { return data.shape.get() == shape; });
-	if (it == m_shapes.end())
-	{
-		return;
-	}
-
-	m_changeShape(it->shape);
 }
 
 #pragma warning(disable:4503)
