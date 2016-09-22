@@ -33,9 +33,6 @@
     <ClInclude Include="..\Paint2\ICanvas.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
-    <ClInclude Include="..\Paint2\EditableRectangle.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
     <ClInclude Include="..\Paint2\EditableShape.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
@@ -60,6 +57,12 @@
     <ClInclude Include="..\Paint2\Shape.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
+    <ClInclude Include="..\Paint2\Doc.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Paint2\IDocument.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -77,9 +80,6 @@
     <ClCompile Include="AppModelTests.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\Paint2\EditableRectangle.cpp">
-      <Filter>Файлы исходного кода</Filter>
-    </ClCompile>
     <ClCompile Include="..\Paint2\EditableShape.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
@@ -93,6 +93,9 @@
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
     <ClCompile Include="..\Paint2\Shape.cpp">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Paint2\Doc.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
   </ItemGroup>

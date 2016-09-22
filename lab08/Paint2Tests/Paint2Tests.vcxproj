@@ -167,10 +167,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Paint2\Canvas.h" />
+    <ClInclude Include="..\Paint2\Doc.h" />
     <ClInclude Include="..\Paint2\EditableCanvas.h" />
-    <ClInclude Include="..\Paint2\EditableRectangle.h" />
     <ClInclude Include="..\Paint2\EditableShape.h" />
     <ClInclude Include="..\Paint2\ICanvas.h" />
+    <ClInclude Include="..\Paint2\IDocument.h" />
     <ClInclude Include="..\Paint2\IEditableCanvas.h" />
     <ClInclude Include="..\Paint2\IEditableShape.h" />
     <ClInclude Include="..\Paint2\ISelection.h" />
@@ -183,8 +184,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Paint2\Canvas.cpp" />
+    <ClCompile Include="..\Paint2\Doc.cpp" />
     <ClCompile Include="..\Paint2\EditableCanvas.cpp" />
-    <ClCompile Include="..\Paint2\EditableRectangle.cpp" />
     <ClCompile Include="..\Paint2\EditableShape.cpp" />
     <ClCompile Include="..\Paint2\Shape.cpp" />
     <ClCompile Include="..\Paint2\Selection.cpp" />

@@ -41,3 +41,4 @@
 #include <memory>
 #include <boost/optional.hpp>
 #include <vector>
+#include <map>

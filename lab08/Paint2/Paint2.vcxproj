@@ -180,11 +180,14 @@
   <ItemGroup>
     <ClInclude Include="..\Paint\History.h" />
     <ClInclude Include="Canvas.h" />
+    <ClInclude Include="CanvasPresenter.h" />
+    <ClInclude Include="Doc.h" />
     <ClInclude Include="EditableCanvas.h" />
-    <ClInclude Include="EditableRectangle.h" />
     <ClInclude Include="EditableShape.h" />
     <ClInclude Include="ICanvas.h" />
     <ClInclude Include="ICanvasView.h" />
+    <ClInclude Include="ICommandSourceDelegate.h" />
+    <ClInclude Include="IDocument.h" />
     <ClInclude Include="IEditableCanvas.h" />
     <ClInclude Include="IEditableShape.h" />
     <ClInclude Include="ISelection.h" />
@@ -198,14 +201,16 @@
     <ClInclude Include="Paint2View.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Selection.h" />
+    <ClInclude Include="ShapeView.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Paint\History.cpp" />
     <ClCompile Include="Canvas.cpp" />
+    <ClCompile Include="CanvasPresenter.cpp" />
+    <ClCompile Include="Doc.cpp" />
     <ClCompile Include="EditableCanvas.cpp" />
-    <ClCompile Include="EditableRectangle.cpp" />
     <ClCompile Include="EditableShape.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="Shape.cpp" />
@@ -213,6 +218,7 @@
     <ClCompile Include="Paint2Doc.cpp" />
     <ClCompile Include="Paint2View.cpp" />
     <ClCompile Include="Selection.cpp" />
+    <ClCompile Include="ShapeView.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

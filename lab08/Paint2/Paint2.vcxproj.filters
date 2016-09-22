@@ -22,6 +22,9 @@
     <Filter Include="AppModel">
       <UniqueIdentifier>{7a8c94e9-2905-453c-9b23-1095bfacdc89}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Presenter">
+      <UniqueIdentifier>{f029bb15-b3b5-4593-9f2e-48b8de5bc3d3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Paint2.h">
@@ -69,9 +72,6 @@
     <ClInclude Include="EditableShape.h">
       <Filter>AppModel</Filter>
     </ClInclude>
-    <ClInclude Include="EditableRectangle.h">
-      <Filter>AppModel</Filter>
-    </ClInclude>
     <ClInclude Include="IEditableCanvas.h">
       <Filter>AppModel</Filter>
     </ClInclude>
@@ -89,6 +89,21 @@
     </ClInclude>
     <ClInclude Include="Shape.h">
       <Filter>DomainModel</Filter>
+    </ClInclude>
+    <ClInclude Include="IDocument.h">
+      <Filter>AppModel</Filter>
+    </ClInclude>
+    <ClInclude Include="Doc.h">
+      <Filter>AppModel</Filter>
+    </ClInclude>
+    <ClInclude Include="CanvasPresenter.h">
+      <Filter>Presenter</Filter>
+    </ClInclude>
+    <ClInclude Include="ICommandSourceDelegate.h">
+      <Filter>View</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeView.h">
+      <Filter>View</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -113,9 +128,6 @@
     <ClCompile Include="EditableShape.cpp">
       <Filter>AppModel</Filter>
     </ClCompile>
-    <ClCompile Include="EditableRectangle.cpp">
-      <Filter>AppModel</Filter>
-    </ClCompile>
     <ClCompile Include="EditableCanvas.cpp">
       <Filter>AppModel</Filter>
     </ClCompile>
@@ -127,6 +139,15 @@
     </ClCompile>
     <ClCompile Include="Shape.cpp">
       <Filter>DomainModel</Filter>
+    </ClCompile>
+    <ClCompile Include="Doc.cpp">
+      <Filter>AppModel</Filter>
+    </ClCompile>
+    <ClCompile Include="CanvasPresenter.cpp">
+      <Filter>Presenter</Filter>
+    </ClCompile>
+    <ClCompile Include="ShapeView.cpp">
+      <Filter>View</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -39,6 +39,7 @@ END_MESSAGE_MAP()
 // CPaint2View construction/destruction
 
 CPaint2View::CPaint2View()
+	: m_delegate(theApp.m_presenter)
 {
 	// TODO: add construction code here
 

@@ -39,6 +39,8 @@ END_MESSAGE_MAP()
 // CPaint2App construction
 
 CPaint2App::CPaint2App()
+	: m_doc(m_canvas)
+	, m_presenter(m_doc)
 {
 	// TODO: replace application ID string below with unique ID string; recommended
 	// format for string is CompanyName.ProductName.SubProduct.VersionInformation

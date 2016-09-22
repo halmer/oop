@@ -10,6 +10,7 @@ CShape::CShape(CRect const & rect, ShapeType type)
 void CShape::SetRect(CRect const & rect)
 {
 	m_rect = rect;
+	m_changeShape(this);
 }
 
 CRect CShape::GetRect() const
@@ -21,3 +22,10 @@ ShapeType CShape::GetType() const
 {
 	return m_type;
 }
+
+boost::signals2::connection CShape::DoOnShapeChange(ShapeChangeSignal::slot_type const & handler)
+{
+	return m_changeShape.connect(handler);
+}
+
+#pragma warning(disable:4503)

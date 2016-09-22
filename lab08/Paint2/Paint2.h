@@ -19,6 +19,9 @@
 
 #include "resource.h"       // main symbols
 
+#include "Canvas.h"
+#include "Doc.h"
+#include "CanvasPresenter.h"
 
 // CPaint2App:
 // See Paint2.cpp for the implementation of this class
@@ -39,6 +42,10 @@ public:
 	virtual void PreLoadState();
 	virtual void LoadCustomState();
 	virtual void SaveCustomState();
+
+	CCanvas m_canvas;
+	CDoc m_doc;
+	CCanvasPresenter m_presenter;
 
 	afx_msg void OnAppAbout();
 	DECLARE_MESSAGE_MAP()

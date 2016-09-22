@@ -9,6 +9,21 @@ public:
 	size_t GetShapeCount() const override;
 	std::shared_ptr<IShape> GetShapeAtIndex(size_t index) const override;
 
+	void DoOnInsertShape(InsertShapeSignal::slot_type const & handler) override;
+	void DoOnDeleteShape(DeleteShapeSignal::slot_type const & handler) override;
+	void DoOnChangeShape(ChangeShapeSignal::slot_type const & handler) override;
+
 private:
-	std::vector<std::shared_ptr<IShape>> m_shapes;
+	void ChangeShape(IShape const * shape);
+
+	struct Data
+	{
+		std::shared_ptr<IShape> shape;
+		boost::signals2::connection connection;
+	};
+
+	std::vector<Data> m_shapes;
+	InsertShapeSignal m_insertShape;
+	DeleteShapeSignal m_deleteShape;
+	ChangeShapeSignal m_changeShape;
 };

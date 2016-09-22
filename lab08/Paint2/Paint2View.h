@@ -13,7 +13,7 @@
 //
 
 #pragma once
-
+#include "ICommandSourceDelegate.h"
 
 class CPaint2View : public CView
 {
@@ -43,7 +43,7 @@ public:
 #endif
 
 protected:
-
+	ICommandSourceDelegate & m_delegate;
 // Generated message map functions
 protected:
 	afx_msg void OnFilePrintPreview();
