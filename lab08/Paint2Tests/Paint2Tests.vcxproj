@@ -167,32 +167,41 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Paint2\Canvas.h" />
+    <ClInclude Include="..\Paint2\CanvasPresenter.h" />
+    <ClInclude Include="..\Paint2\CanvasView.h" />
     <ClInclude Include="..\Paint2\Doc.h" />
     <ClInclude Include="..\Paint2\EditableCanvas.h" />
     <ClInclude Include="..\Paint2\EditableShape.h" />
     <ClInclude Include="..\Paint2\ICanvas.h" />
+    <ClInclude Include="..\Paint2\ICanvasView.h" />
     <ClInclude Include="..\Paint2\IDocument.h" />
     <ClInclude Include="..\Paint2\IEditableCanvas.h" />
     <ClInclude Include="..\Paint2\IEditableShape.h" />
     <ClInclude Include="..\Paint2\ISelection.h" />
     <ClInclude Include="..\Paint2\IShape.h" />
+    <ClInclude Include="..\Paint2\IShapeView.h" />
     <ClInclude Include="..\Paint2\Shape.h" />
     <ClInclude Include="..\Paint2\Selection.h" />
+    <ClInclude Include="..\Paint2\ShapeView.h" />
     <ClInclude Include="..\Paint\History.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Paint2\Canvas.cpp" />
+    <ClCompile Include="..\Paint2\CanvasPresenter.cpp" />
+    <ClCompile Include="..\Paint2\CanvasView.cpp" />
     <ClCompile Include="..\Paint2\Doc.cpp" />
     <ClCompile Include="..\Paint2\EditableCanvas.cpp" />
     <ClCompile Include="..\Paint2\EditableShape.cpp" />
     <ClCompile Include="..\Paint2\Shape.cpp" />
     <ClCompile Include="..\Paint2\Selection.cpp" />
+    <ClCompile Include="..\Paint2\ShapeView.cpp" />
     <ClCompile Include="..\Paint\History.cpp" />
     <ClCompile Include="AppModelTests.cpp" />
     <ClCompile Include="DomainModelTests.cpp" />
     <ClCompile Include="Paint2Tests.cpp" />
+    <ClCompile Include="PresenterTests.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

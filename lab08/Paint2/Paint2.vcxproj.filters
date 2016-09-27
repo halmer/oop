@@ -105,6 +105,12 @@
     <ClInclude Include="ShapeView.h">
       <Filter>View</Filter>
     </ClInclude>
+    <ClInclude Include="CanvasView.h">
+      <Filter>View</Filter>
+    </ClInclude>
+    <ClInclude Include="IPaint2View.h">
+      <Filter>View</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Paint2.cpp">
@@ -149,6 +155,9 @@
     <ClCompile Include="ShapeView.cpp">
       <Filter>View</Filter>
     </ClCompile>
+    <ClCompile Include="CanvasView.cpp">
+      <Filter>View</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Paint2.rc">
@@ -184,6 +193,12 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\Toolbar256.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\paintlarge.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\paintsmall.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

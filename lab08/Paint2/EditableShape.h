@@ -6,7 +6,8 @@ class CHistory;
 class CEditableShape : public IEditableShape
 {
 public:
-	CEditableShape(const std::shared_ptr<IShape> & shape, CHistory & history);
+	CEditableShape(std::shared_ptr<IShape> const & shape, CHistory & history);
+	~CEditableShape();
 	void SetRect(CRect const & rect) override;
 	void Offset(CPoint const & delta, OffsetType type) override;
 	CRect GetRect() const override;
@@ -17,8 +18,8 @@ public:
 
 private:
 	CRect m_rect;
-	ShapeChangeSignal m_shapeChange;
-
 	std::shared_ptr<IShape> m_shape;
 	CHistory & m_history;
+	ShapeChangeSignal m_shapeChange;
+	boost::signals2::connection m_connection;
 };

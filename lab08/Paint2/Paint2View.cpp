@@ -1,20 +1,4 @@
-// This MFC Samples source code demonstrates using MFC Microsoft Office Fluent User Interface 
-// (the "Fluent UI") and is provided only as referential material to supplement the 
-// Microsoft Foundation Classes Reference and related electronic documentation 
-// included with the MFC C++ library software.  
-// License terms to copy, use or distribute the Fluent UI are available separately.  
-// To learn more about our Fluent UI licensing program, please visit 
-// http://go.microsoft.com/fwlink/?LinkId=238214.
-//
-// Copyright (C) Microsoft Corporation
-// All rights reserved.
-
-// Paint2View.cpp : implementation of the CPaint2View class
-//
-
 #include "stdafx.h"
-// SHARED_HANDLERS can be defined in an ATL project implementing preview, thumbnail
-// and search filter handlers and allows sharing of document code with that project.
 #ifndef SHARED_HANDLERS
 #include "Paint2.h"
 #endif
@@ -26,47 +10,79 @@
 #define new DEBUG_NEW
 #endif
 
+IMPLEMENT_DYNCREATE(CPaint2View, CScrollView)
 
-// CPaint2View
-
-IMPLEMENT_DYNCREATE(CPaint2View, CView)
-
-BEGIN_MESSAGE_MAP(CPaint2View, CView)
+BEGIN_MESSAGE_MAP(CPaint2View, CScrollView)
 	ON_WM_CONTEXTMENU()
 	ON_WM_RBUTTONUP()
+	ON_COMMAND(ID_BUTTON_RECTANGLE, &CPaint2View::OnCreateRectangle)
+	ON_COMMAND(ID_BUTTON_TRIANGLE, &CPaint2View::OnCreateTriangle)
+	ON_COMMAND(ID_BUTTON_ELLIPSE, &CPaint2View::OnCreateEllipse)
+	ON_COMMAND(ID_BUTTON_UNDO, &CPaint2View::OnUndo)
+	ON_COMMAND(ID_BUTTON_REDO, &CPaint2View::OnRedo)
+	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
+	ON_WM_MOUSEMOVE()
+	ON_WM_KEYDOWN()
+	ON_WM_ERASEBKGND()
+	ON_UPDATE_COMMAND_UI(ID_BUTTON_UNDO, &CPaint2View::OnUpdateUndo)
+	ON_UPDATE_COMMAND_UI(ID_BUTTON_REDO, &CPaint2View::OnUpdateRedo)
 END_MESSAGE_MAP()
 
-// CPaint2View construction/destruction
-
 CPaint2View::CPaint2View()
-	: m_delegate(theApp.m_presenter)
+	: m_delegate(theApp.m_doc, theApp.m_canvasView)
+	, m_canvasView(theApp.m_canvasView)
+	, m_pen(PS_SOLID, 2, RGB(255, 0, 0))
+	, m_brush(RGB(255, 255, 0))
 {
-	// TODO: add construction code here
-
+	m_delegate.InitView(this);
 }
 
 CPaint2View::~CPaint2View()
 {
 }
 
-BOOL CPaint2View::PreCreateWindow(CREATESTRUCT& cs)
+void CPaint2View::OnInitialUpdate()
 {
-	// TODO: Modify the Window class or styles here by modifying
-	//  the CREATESTRUCT cs
+	CScrollView::OnInitialUpdate();
 
-	return CView::PreCreateWindow(cs);
+	SetScrollSizes(MM_TEXT, CSize(100, 100));
 }
 
-// CPaint2View drawing
-
-void CPaint2View::OnDraw(CDC* /*pDC*/)
+BOOL CPaint2View::PreCreateWindow(CREATESTRUCT& cs)
 {
-	CPaint2Doc* pDoc = GetDocument();
-	ASSERT_VALID(pDoc);
-	if (!pDoc)
-		return;
+	return CScrollView::PreCreateWindow(cs);
+}
 
-	// TODO: add draw code for native data here
+void CPaint2View::OnDraw(CDC * pDC)
+{
+	CDC dcMem;
+	dcMem.CreateCompatibleDC(pDC);
+
+	CRect clientRect;
+	GetClientRect(&clientRect);
+	pDC->DPtoLP(&clientRect);
+
+	CBitmap bmpMem;
+	bmpMem.CreateCompatibleBitmap(pDC, clientRect.right, clientRect.bottom);
+
+	CPen * oldPen = dcMem.SelectObject(&m_pen);
+	CBrush * oldBrush = dcMem.SelectObject(&m_brush);
+	CBitmap * oldBmp = dcMem.SelectObject(&bmpMem);
+
+	dcMem.FillSolidRect(clientRect, RGB(255, 255, 255));
+
+	for (size_t i = 0; i < m_canvasView.GetShapeCount(); ++i)
+	{
+		m_canvasView.GetShapeAtIndex(i)->DrawShape(&dcMem);
+	}
+	
+	pDC->BitBlt(clientRect.left, clientRect.top, clientRect.Width(), clientRect.Height(),
+				&dcMem, clientRect.left, clientRect.top, SRCCOPY);
+
+	dcMem.SelectObject(oldPen);
+	dcMem.SelectObject(oldBrush);
+	dcMem.SelectObject(oldBmp);
 }
 
 void CPaint2View::OnRButtonUp(UINT /* nFlags */, CPoint point)
@@ -82,26 +98,107 @@ void CPaint2View::OnContextMenu(CWnd* /* pWnd */, CPoint point)
 #endif
 }
 
+void CPaint2View::OnCreateRectangle()
+{
+	m_delegate.OnCreateRectangle();
+	Invalidate();
+}
 
-// CPaint2View diagnostics
+void CPaint2View::OnCreateTriangle()
+{
+	m_delegate.OnCreateTriangle();
+	Invalidate();
+}
+
+void CPaint2View::OnCreateEllipse()
+{
+	m_delegate.OnCreateEllipse();
+	Invalidate();
+}
+
+void CPaint2View::OnUndo()
+{
+	m_delegate.OnUndo();
+	Invalidate();
+}
+
+void CPaint2View::OnRedo()
+{
+	m_delegate.OnRedo();
+	Invalidate();
+}
+
+void CPaint2View::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	point.Offset(GetDeviceScrollPosition());
+	m_delegate.OnLButtonDown(nFlags, point);
+
+	CScrollView::OnLButtonDown(nFlags, point);
+}
+
+void CPaint2View::OnLButtonUp(UINT nFlags, CPoint point)
+{
+	m_delegate.OnLButtonUp(nFlags, point);
+	Invalidate();
+
+	CScrollView::OnLButtonUp(nFlags, point);
+}
+
+void CPaint2View::OnMouseMove(UINT nFlags, CPoint point)
+{
+	point.Offset(GetDeviceScrollPosition());
+	m_delegate.OnMouseMove(nFlags, point);
+	Invalidate();
+
+	CScrollView::OnMouseMove(nFlags, point);
+}
+
+void CPaint2View::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	m_delegate.OnKeyDown(nChar, nRepCnt, nFlags);
+	Invalidate();
+
+	CScrollView::OnKeyDown(nChar, nRepCnt, nFlags);
+}
+
+BOOL CPaint2View::OnEraseBkgnd(CDC* /*pDC*/)
+{
+	return FALSE;
+}
+
+void CPaint2View::OnUpdateUndo(CCmdUI * pCmdUI)
+{
+	m_delegate.OnUpdateUndo(pCmdUI);
+}
+
+void CPaint2View::OnUpdateRedo(CCmdUI * pCmdUI)
+{
+	m_delegate.OnUpdateRedo(pCmdUI);
+}
+
+CPoint CPaint2View::GetPointInViewCenter() const
+{
+	CRect clientRect;
+	GetClientRect(&clientRect);
+	clientRect.OffsetRect(GetDeviceScrollPosition());
+
+	return clientRect.CenterPoint();
+}
 
 #ifdef _DEBUG
 void CPaint2View::AssertValid() const
 {
-	CView::AssertValid();
+	CScrollView::AssertValid();
 }
 
 void CPaint2View::Dump(CDumpContext& dc) const
 {
-	CView::Dump(dc);
+	CScrollView::Dump(dc);
 }
 
-CPaint2Doc* CPaint2View::GetDocument() const // non-debug version is inline
+CPaint2Doc* CPaint2View::GetDocument() const
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CPaint2Doc)));
-	return (CPaint2Doc*)m_pDocument;
+	return (CPaint2Doc*)m_pDocument;//-V2005
 }
-#endif //_DEBUG
-
-
-// CPaint2View message handlers
+#endif

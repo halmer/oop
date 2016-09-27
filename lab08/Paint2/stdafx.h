@@ -33,12 +33,14 @@
 #endif
 #endif
 
-
+#pragma comment (linker, "/SUBSYSTEM:CONSOLE")
 #pragma warning(push)
 #pragma warning(disable: 4996)
 #include <boost/signals2.hpp>
 #pragma warning(pop)
 #include <memory>
 #include <boost/optional.hpp>
+#include <boost/range/adaptor/reversed.hpp>
 #include <vector>
 #include <map>
+#include <iostream>

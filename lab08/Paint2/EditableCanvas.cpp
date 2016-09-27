@@ -90,7 +90,7 @@ void CEditableCanvas::DoOnChangeShape(ChangeShapeSignal::slot_type const & handl
 
 void CEditableCanvas::InsertShape(std::shared_ptr<IShape> const & shape, boost::optional<size_t> pos)
 {
-	std::shared_ptr<IEditableShape> editableShape = std::make_shared<CEditableShape>(shape);
+	std::shared_ptr<IEditableShape> editableShape = std::make_shared<CEditableShape>(shape, m_history);
 	editableShape->DoOnShapeChange(std::bind(&CEditableCanvas::ChangeEditableShape, this, std::placeholders::_1));
 
 	if (pos)
@@ -132,11 +132,6 @@ void CEditableCanvas::ChangeEditableShape(IEditableShape const * shape)
 	{
 		return;
 	}
-
-	m_history.AddCommandAndExecute({
-		std::bind(&IShape::SetRect, it->shape, it->editableShape->GetRect()),
-		std::bind(&IShape::SetRect, it->shape, it->shape->GetRect())
-	});
 
 	m_changeShape(it->editableShape);
 }

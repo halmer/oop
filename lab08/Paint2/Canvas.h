@@ -13,9 +13,6 @@ public:
 	void DoOnDeleteShape(DeleteShapeSignal::slot_type const & handler) override;
 
 private:
-
-	std::shared_ptr<IShape> shape;
-
 	std::vector<std::shared_ptr<IShape>> m_shapes;
 	InsertShapeSignal m_insertShape;
 	DeleteShapeSignal m_deleteShape;

@@ -1,16 +1,21 @@
 #include "stdafx.h"
 #include "EditableShape.h"
-#include "..\paint\History.h"
+#include "..\Paint\History.h"
 
-CEditableShape::CEditableShape(const std::shared_ptr<IShape> & shape, CHistory & history)
+CEditableShape::CEditableShape(std::shared_ptr<IShape> const & shape, CHistory & history)
 	: m_rect(shape->GetRect())
 	, m_shape(shape)
 	, m_history(history)
 {
-	shape->DoOnShapeChange([this](IShape const * shape) {
+	m_connection = shape->DoOnShapeChange([this](IShape const * shape) {
 		m_rect = shape->GetRect();
 		m_shapeChange(this);
 	});
+}
+
+CEditableShape::~CEditableShape()
+{
+	m_connection.disconnect();
 }
 
 void CEditableShape::SetRect(CRect const & rect)
@@ -63,7 +68,6 @@ void CEditableShape::Commit()
 			std::bind(&IShape::SetRect, m_shape, m_rect),
 			std::bind(&IShape::SetRect, m_shape, oldRect)
 		});
-		m_shapeChange(this);
 	}
 }
 

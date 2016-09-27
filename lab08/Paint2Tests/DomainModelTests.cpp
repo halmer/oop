@@ -16,11 +16,15 @@ BOOST_FIXTURE_TEST_SUITE(DomainModelTests, DomainModelTests_)
 	{
 		CShape shape(rect0, ShapeType::Triangle);
 		BOOST_CHECK_EQUAL(shape.GetRect(), rect0);
+		BOOST_CHECK(shape.GetType() == ShapeType::Triangle);
 		
+		int countChangeShape = 0;
+		auto action = [&countChangeShape](IShape const *) { ++countChangeShape; };
+		shape.DoOnShapeChange(action);
+
 		shape.SetRect(rect15);
 		BOOST_CHECK_EQUAL(shape.GetRect(), rect15);
-
-		BOOST_CHECK(shape.GetType() == ShapeType::Triangle);
+		BOOST_CHECK_EQUAL(countChangeShape, 1);
 	}
 	//
 	BOOST_AUTO_TEST_CASE(canvas)
@@ -31,10 +35,6 @@ BOOST_FIXTURE_TEST_SUITE(DomainModelTests, DomainModelTests_)
 		int countInsertShape = 0;
 		auto action = [&countInsertShape](std::shared_ptr<IShape> const &, boost::optional<size_t>){ ++countInsertShape; };
 		canvas->DoOnInsertShape(action);
-
-		int countChangeShape = 0;
-		auto action1 = [&countChangeShape](std::shared_ptr<IShape> const &) { ++countChangeShape; };
-		canvas->DoOnChangeShape(action1);
 
 		auto rectangle = std::make_shared<CShape>(rect15, ShapeType::Rectangle);
 		auto triangle = std::make_shared<CShape>(rect15, ShapeType::Triangle);
@@ -56,12 +56,5 @@ BOOST_FIXTURE_TEST_SUITE(DomainModelTests, DomainModelTests_)
 
 		canvas->InsertShape(rectangle, boost::none);
 		BOOST_CHECK_EQUAL(canvas->GetShapeAtIndex(2), rectangle);
-
-		BOOST_CHECK(canvas->GetShapeAtIndex(3) == nullptr);
-
-		BOOST_CHECK_EQUAL(rectangle->GetRect(), rect15);
-		rectangle->SetRect(rect0);
-		BOOST_CHECK_EQUAL(rectangle->GetRect(), rect0);
-		BOOST_CHECK_EQUAL(countChangeShape, 1);
 	}
 BOOST_AUTO_TEST_SUITE_END()

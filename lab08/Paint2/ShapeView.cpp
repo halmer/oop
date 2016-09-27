@@ -3,7 +3,7 @@
 
 using namespace std;
 
-CShapeView::CShapeView(CRect const & rect, ShapeType type)
+CShapeView::CShapeView(CRect const & rect, ShapeViewType type)
 	: m_rect(rect)
 	, m_type(type)
 {
@@ -14,14 +14,14 @@ void CShapeView::SetRect(CRect const & rect)
 	m_rect = rect;
 }
 
-static map<ShapeType, function<void(CDC*, CRect)>> const drawingShapes{
-	{ ShapeType::Rectangle,
+static map<ShapeViewType, function<void(CDC*, CRect)>> const drawingShapes{
+	{ ShapeViewType::Rectangle,
 		bind(static_cast<BOOL(CDC::*)(LPCRECT)>(&CDC::Rectangle), placeholders::_1, placeholders::_2)
 	},
-	{ ShapeType::Ellipse,
+	{ ShapeViewType::Ellipse,
 		bind(static_cast<BOOL(CDC::*)(LPCRECT)>(&CDC::Ellipse), placeholders::_1, placeholders::_2)
 	},
-	{ ShapeType::Triangle,
+	{ ShapeViewType::Triangle,
 		[](CDC * pDC, CRect rect) {
 			vector<CPoint> points;
 			points.reserve(3);
@@ -42,22 +42,22 @@ void CShapeView::DrawShape(CDC * pDC)
 	}
 }
 
-static map<ShapeType, function<bool(CRect const &, CPoint const &)>> const pointInShape{
-	{ ShapeType::Rectangle,
+static map<ShapeViewType, function<bool(CRect const &, CPoint const &)>> const pointInShape{
+	{ ShapeViewType::Rectangle,
 		[](CRect const & rect, CPoint const & point) {
 			CRgn rgn;
 			rgn.CreateRectRgnIndirect(&rect);
 			return rgn.PtInRegion(point) != 0;
 		}
 	},
-	{ ShapeType::Ellipse,
+	{ ShapeViewType::Ellipse,
 		[](CRect const & rect, CPoint const & point) {
 			CRgn rgn;
 			rgn.CreateEllipticRgnIndirect(&rect);
 			return rgn.PtInRegion(point) != 0;
 		}
 	},
-	{ ShapeType::Triangle,
+	{ ShapeViewType::Triangle,
 		[](CRect const & rect, CPoint const & point) {
 			vector<CPoint> points;
 			points.reserve(3);

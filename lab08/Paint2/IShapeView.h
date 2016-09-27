@@ -1,5 +1,12 @@
 #pragma once
 
+enum class ShapeViewType
+{
+	Rectangle,
+	Triangle,
+	Ellipse,
+};
+
 class IShapeView
 {
 public:

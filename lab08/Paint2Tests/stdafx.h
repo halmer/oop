@@ -21,3 +21,5 @@
 #include <memory>
 #include <vector>
 #include <boost/optional.hpp>
+#include <boost/range/adaptor/reversed.hpp>
+#include <iostream>

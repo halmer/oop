@@ -4,13 +4,13 @@
 
 void CCanvas::InsertShape(std::shared_ptr<IShape> const & shape, boost::optional<size_t> pos)
 {
-	if (pos && *pos > m_shapes.size())
-	{
-		return;
-	}
-	
 	if (pos)
 	{
+		if (*pos > m_shapes.size())
+		{
+			return;
+		}
+
 		m_shapes.insert(m_shapes.begin() + *pos, shape);
 	}
 	else
@@ -18,7 +18,6 @@ void CCanvas::InsertShape(std::shared_ptr<IShape> const & shape, boost::optional
 		m_shapes.push_back(shape);
 	}
 
-	
 	m_insertShape(shape, pos);
 }
 

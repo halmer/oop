@@ -46,5 +46,3 @@
 #include <boost/numeric/conversion/cast.hpp>
 #include "pugixml.hpp"
 #include <cassert>
-
-#include <WinUser.h>

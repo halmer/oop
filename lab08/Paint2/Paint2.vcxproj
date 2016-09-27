@@ -181,6 +181,7 @@
     <ClInclude Include="..\Paint\History.h" />
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="CanvasPresenter.h" />
+    <ClInclude Include="CanvasView.h" />
     <ClInclude Include="Doc.h" />
     <ClInclude Include="EditableCanvas.h" />
     <ClInclude Include="EditableShape.h" />
@@ -190,6 +191,7 @@
     <ClInclude Include="IDocument.h" />
     <ClInclude Include="IEditableCanvas.h" />
     <ClInclude Include="IEditableShape.h" />
+    <ClInclude Include="IPaint2View.h" />
     <ClInclude Include="ISelection.h" />
     <ClInclude Include="ISelectionView.h" />
     <ClInclude Include="IShape.h" />
@@ -209,6 +211,7 @@
     <ClCompile Include="..\Paint\History.cpp" />
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="CanvasPresenter.cpp" />
+    <ClCompile Include="CanvasView.cpp" />
     <ClCompile Include="Doc.cpp" />
     <ClCompile Include="EditableCanvas.cpp" />
     <ClCompile Include="EditableShape.cpp" />
@@ -236,6 +239,8 @@
     <Image Include="res\main.bmp" />
     <Image Include="res\Paint2.ico" />
     <Image Include="res\Paint2Doc.ico" />
+    <Image Include="res\paintlarge.bmp" />
+    <Image Include="res\paintsmall.bmp" />
     <Image Include="res\Toolbar.bmp" />
     <Image Include="res\Toolbar256.bmp" />
     <Image Include="res\writelarge.bmp" />
@@ -248,4 +253,9 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="Paint2.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

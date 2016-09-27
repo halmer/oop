@@ -5,6 +5,7 @@
 #include "../Paint2/Canvas.h"
 #include "../Paint/History.h"
 #include "../Paint2/Doc.h"
+#include "../Paint2/Shape.h"
 #include <initializer_list>
 
 using namespace std;
@@ -77,24 +78,27 @@ BOOST_FIXTURE_TEST_SUITE(AppModelTests, AppModelTests_)
 	//
 	BOOST_AUTO_TEST_CASE(editable_shape)
 	{
-		CEditableShape shape(rect0, ShapeType::Rectangle);
-		BOOST_CHECK_EQUAL(shape.GetRect(), rect0);
+		auto shape = make_shared<CShape>(rect0, ShapeType::Rectangle);
+		CHistory history;
+		CEditableShape editableShape(shape, history);
+		BOOST_CHECK_EQUAL(editableShape.GetRect(), rect0);
 
-		shape.SetRect(rect15);
-		BOOST_CHECK_EQUAL(shape.GetRect(), rect15);
+		editableShape.SetRect(rect15);
+		BOOST_CHECK_EQUAL(editableShape.GetRect(), rect15);
 
-		shape.Offset(CPoint(-15, -15), OffsetType::BottomRight);
-		BOOST_CHECK_EQUAL(shape.GetRect(), rect0);
+		editableShape.Offset(CPoint(-15, -15), OffsetType::BottomRight);
+		BOOST_CHECK_EQUAL(editableShape.GetRect(), rect0);
 
-		BOOST_CHECK(shape.GetType() == ShapeType::Rectangle);
+		BOOST_CHECK(editableShape.GetType() == ShapeType::Rectangle);
 
 		IEditableShape const * shapePointer = nullptr;
 		auto action = [&shapePointer](IEditableShape const * shape) { shapePointer = shape; };
-		shape.DoOnShapeChange(action);
+		editableShape.DoOnShapeChange(action);
 
+		editableShape.SetRect(rect15);
 		BOOST_CHECK(shapePointer == nullptr);
-		shape.Commit();
-		BOOST_CHECK(shapePointer == &shape);
+		editableShape.Commit();
+		BOOST_CHECK(shapePointer == &editableShape);
 	}
 	//
 	BOOST_AUTO_TEST_CASE(editable_canvas)

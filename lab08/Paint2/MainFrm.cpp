@@ -47,10 +47,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	BOOL bNameValid;
 
-	m_wndRibbonBar.Create(this);
+	m_wndRibbonBar.Create(this);//-V2001
 	m_wndRibbonBar.LoadFromResource(IDR_RIBBON);
 
-	if (!m_wndStatusBar.Create(this))
+	if (!m_wndStatusBar.Create(this))//-V2001
 	{
 		TRACE0("Failed to create status bar\n");
 		return -1;      // fail to create
