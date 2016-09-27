@@ -30,11 +30,11 @@ BEGIN_MESSAGE_MAP(CPaint2View, CScrollView)
 END_MESSAGE_MAP()
 
 CPaint2View::CPaint2View()
-	: m_delegate(theApp.m_doc, m_canvasView)
+	: m_presenter(theApp.m_doc, m_canvasView)
 	, m_pen(PS_SOLID, 2, RGB(255, 0, 0))
 	, m_brush(RGB(255, 255, 0))
 {
-	m_delegate.InitView(this);
+	m_presenter.InitView(this);
 }
 
 CPaint2View::~CPaint2View()
@@ -99,45 +99,45 @@ void CPaint2View::OnContextMenu(CWnd* /* pWnd */, CPoint point)
 
 void CPaint2View::OnCreateRectangle()
 {
-	m_delegate.OnCreateRectangle();
+	m_presenter.OnCreateRectangle();
 	Invalidate();
 }
 
 void CPaint2View::OnCreateTriangle()
 {
-	m_delegate.OnCreateTriangle();
+	m_presenter.OnCreateTriangle();
 	Invalidate();
 }
 
 void CPaint2View::OnCreateEllipse()
 {
-	m_delegate.OnCreateEllipse();
+	m_presenter.OnCreateEllipse();
 	Invalidate();
 }
 
 void CPaint2View::OnUndo()
 {
-	m_delegate.OnUndo();
+	m_presenter.OnUndo();
 	Invalidate();
 }
 
 void CPaint2View::OnRedo()
 {
-	m_delegate.OnRedo();
+	m_presenter.OnRedo();
 	Invalidate();
 }
 
 void CPaint2View::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	point.Offset(GetDeviceScrollPosition());
-	m_delegate.OnLButtonDown(nFlags, point);
+	m_presenter.OnLButtonDown(nFlags, point);
 
 	CScrollView::OnLButtonDown(nFlags, point);
 }
 
 void CPaint2View::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	m_delegate.OnLButtonUp(nFlags, point);
+	m_presenter.OnLButtonUp(nFlags, point);
 	Invalidate();
 
 	CScrollView::OnLButtonUp(nFlags, point);
@@ -146,7 +146,7 @@ void CPaint2View::OnLButtonUp(UINT nFlags, CPoint point)
 void CPaint2View::OnMouseMove(UINT nFlags, CPoint point)
 {
 	point.Offset(GetDeviceScrollPosition());
-	m_delegate.OnMouseMove(nFlags, point);
+	m_presenter.OnMouseMove(nFlags, point);
 	Invalidate();
 
 	CScrollView::OnMouseMove(nFlags, point);
@@ -154,7 +154,7 @@ void CPaint2View::OnMouseMove(UINT nFlags, CPoint point)
 
 void CPaint2View::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	m_delegate.OnKeyDown(nChar, nRepCnt, nFlags);
+	m_presenter.OnKeyDown(nChar, nRepCnt, nFlags);
 	Invalidate();
 
 	CScrollView::OnKeyDown(nChar, nRepCnt, nFlags);
@@ -167,12 +167,12 @@ BOOL CPaint2View::OnEraseBkgnd(CDC* /*pDC*/)
 
 void CPaint2View::OnUpdateUndo(CCmdUI * pCmdUI)
 {
-	m_delegate.OnUpdateUndo(pCmdUI);
+	m_presenter.OnUpdateUndo(pCmdUI);
 }
 
 void CPaint2View::OnUpdateRedo(CCmdUI * pCmdUI)
 {
-	m_delegate.OnUpdateRedo(pCmdUI);
+	m_presenter.OnUpdateRedo(pCmdUI);
 }
 
 CPoint CPaint2View::GetPointInViewCenter() const
