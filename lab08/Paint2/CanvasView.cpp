@@ -60,3 +60,24 @@ std::shared_ptr<IShapeView> CCanvasView::GetShapeAtIndex(size_t index) const
 {
 	return m_shapes.at(index);
 }
+
+CCanvasView::CCanvasView()
+	: m_pen(PS_SOLID, 2, RGB(255, 0, 0))
+	, m_brush(RGB(255, 255, 0))
+{
+
+}
+
+void CCanvasView::Draw(CDC & dc)
+{
+	CPen * oldPen = dc.SelectObject(&m_pen);
+	CBrush * oldBrush = dc.SelectObject(&m_brush);
+
+	for (auto & shape : m_shapes)
+	{
+		shape->DrawShape(&dc);
+	}
+	dc.SelectObject(oldPen);
+	dc.SelectObject(oldBrush);
+
+}

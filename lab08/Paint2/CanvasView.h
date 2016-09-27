@@ -11,7 +11,12 @@ public:
 	size_t GetShapeCount() const override;
 	std::shared_ptr<IShapeView> GetShapeAtIndex(size_t index) const override;
 
-public:
+	CCanvasView();
+	void Draw(CDC & dc);
+
+private:
 	std::vector<std::shared_ptr<IShapeView>> m_shapes;
 	std::shared_ptr<IShapeView> m_selectedShape;
+	CPen m_pen;
+	CBrush m_brush;
 };

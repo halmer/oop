@@ -31,8 +31,6 @@ END_MESSAGE_MAP()
 
 CPaint2View::CPaint2View()
 	: m_presenter(theApp.m_doc, m_canvasView)
-	, m_pen(PS_SOLID, 2, RGB(255, 0, 0))
-	, m_brush(RGB(255, 255, 0))
 {
 	m_presenter.InitView(this);
 }
@@ -65,22 +63,14 @@ void CPaint2View::OnDraw(CDC * pDC)
 	CBitmap bmpMem;
 	bmpMem.CreateCompatibleBitmap(pDC, clientRect.right, clientRect.bottom);
 
-	CPen * oldPen = dcMem.SelectObject(&m_pen);
-	CBrush * oldBrush = dcMem.SelectObject(&m_brush);
 	CBitmap * oldBmp = dcMem.SelectObject(&bmpMem);
-
 	dcMem.FillSolidRect(clientRect, RGB(255, 255, 255));
 
-	for (size_t i = 0; i < m_canvasView.GetShapeCount(); ++i)
-	{
-		m_canvasView.GetShapeAtIndex(i)->DrawShape(&dcMem);
-	}
-	
+	m_canvasView.Draw(dcMem);
+
 	pDC->BitBlt(clientRect.left, clientRect.top, clientRect.Width(), clientRect.Height(),
 				&dcMem, clientRect.left, clientRect.top, SRCCOPY);
 
-	dcMem.SelectObject(oldPen);
-	dcMem.SelectObject(oldBrush);
 	dcMem.SelectObject(oldBmp);
 }
 

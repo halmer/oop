@@ -38,8 +38,6 @@ protected:
 private:
 	CCanvasView m_canvasView;
 	CCanvasPresenter m_presenter;
-	CPen m_pen;
-	CBrush m_brush;
 
 public:
 #ifdef _DEBUG
