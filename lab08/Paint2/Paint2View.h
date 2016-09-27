@@ -2,6 +2,7 @@
 #include "IPaint2View.h"
 #include "CanvasPresenter.h"
 #include "ICanvasView.h"
+#include "CanvasView.h"
 
 class CPaint2View : public CScrollView, IPaint2View
 {
@@ -35,8 +36,8 @@ protected:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 
 private:
+	CCanvasView m_canvasView;
 	CCanvasPresenter m_delegate;
-	ICanvasView & m_canvasView;
 	CPen m_pen;
 	CBrush m_brush;
 

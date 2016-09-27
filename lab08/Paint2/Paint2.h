@@ -8,7 +8,6 @@
 #include "Canvas.h"
 #include "Doc.h"
 #include "CanvasPresenter.h"
-#include "CanvasView.h"
 
 class CPaint2App : public CWinAppEx
 {
@@ -27,7 +26,6 @@ public:
 
 	CCanvas m_canvas;
 	CDoc m_doc;
-	CCanvasView m_canvasView;
 	
 	afx_msg void OnAppAbout();
 	DECLARE_MESSAGE_MAP()

@@ -30,8 +30,7 @@ BEGIN_MESSAGE_MAP(CPaint2View, CScrollView)
 END_MESSAGE_MAP()
 
 CPaint2View::CPaint2View()
-	: m_delegate(theApp.m_doc, theApp.m_canvasView)
-	, m_canvasView(theApp.m_canvasView)
+	: m_delegate(theApp.m_doc, m_canvasView)
 	, m_pen(PS_SOLID, 2, RGB(255, 0, 0))
 	, m_brush(RGB(255, 255, 0))
 {
