@@ -120,14 +120,17 @@ void CPaint2View::OnRedo()
 void CPaint2View::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	point.Offset(GetDeviceScrollPosition());
-	m_presenter.OnLButtonDown(nFlags, point);
+	//m_presenter.OnLButtonDown(nFlags, point);
+	m_canvasView.HandleMouseDown(point);
 
 	CScrollView::OnLButtonDown(nFlags, point);
 }
 
 void CPaint2View::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	m_presenter.OnLButtonUp(nFlags, point);
+	point.Offset(GetDeviceScrollPosition());
+	m_canvasView.HandleMouseUp(point);
+
 	Invalidate();
 
 	CScrollView::OnLButtonUp(nFlags, point);
@@ -136,7 +139,9 @@ void CPaint2View::OnLButtonUp(UINT nFlags, CPoint point)
 void CPaint2View::OnMouseMove(UINT nFlags, CPoint point)
 {
 	point.Offset(GetDeviceScrollPosition());
-	m_presenter.OnMouseMove(nFlags, point);
+	//m_presenter.OnMouseMove(nFlags, point);
+	m_canvasView.HandleMouseMove(nFlags, point);
+
 	Invalidate();
 
 	CScrollView::OnMouseMove(nFlags, point);

@@ -42,6 +42,45 @@ void CShapeView::DrawShape(CDC * pDC)
 	}
 }
 
+bool CShapeView::HandleMouseDown(CPoint const & point)
+{
+	if (!HitTest(point))
+	{
+		return false;
+	}
+
+	m_mousePressSignal(*this);
+
+	return true;
+}
+
+void CShapeView::HandleMouseUp(CPoint const & point)
+{
+	m_mouseReleaseSignal(*this, HitTest(point));
+}
+
+void CShapeView::HandleDrag(CPoint const& point, CPoint const& oldPoint)
+{
+	CRect targetRect = m_rect;
+	targetRect.OffsetRect(point - oldPoint);
+	m_mouseDragSignal(*this, targetRect);
+}
+
+Connection CShapeView::DoOnMousePress(const MousePressSignal::slot_type & handler)
+{
+	return m_mousePressSignal.connect(handler);
+}
+
+Connection CShapeView::DoOnMouseRelease(const MouseReleaseSignal::slot_type & handler)
+{
+	return m_mouseReleaseSignal.connect(handler);
+}
+
+Connection CShapeView::DoOnMouseDrag(const MouseDragSignal::slot_type & handler)
+{
+	return m_mouseDragSignal.connect(handler);
+}
+
 static map<ShapeViewType, function<bool(CRect const &, CPoint const &)>> const pointInShape{
 	{ ShapeViewType::Rectangle,
 		[](CRect const & rect, CPoint const & point) {
@@ -71,7 +110,7 @@ static map<ShapeViewType, function<bool(CRect const &, CPoint const &)>> const p
 	}
 };
 
-bool CShapeView::IsPointInShape(CPoint const & point) const
+bool CShapeView::HitTest(CPoint const & point) const
 {
 	auto it = pointInShape.find(m_type);
 	if (it != pointInShape.end())
@@ -84,3 +123,5 @@ bool CShapeView::IsPointInShape(CPoint const & point) const
 	
 	return false;
 }
+
+#pragma warning (disable:4503)

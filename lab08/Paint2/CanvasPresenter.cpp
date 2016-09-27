@@ -49,7 +49,8 @@ void CCanvasPresenter::OnRedo()
 	m_doc.Redo();
 }
 
-void CCanvasPresenter::OnLButtonDown(UINT /*nFlags*/, CPoint point)
+/*
+void CCanvasPresenter::OnLButtonDown(UINT / *nFlags* /, CPoint point)
 {
 	for (auto const & item : boost::adaptors::reverse(m_shapes))
 	{
@@ -66,8 +67,10 @@ void CCanvasPresenter::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 	m_canvasView.SelectShape(nullptr);
 	m_canvas.SelectShape(nullptr);
 }
+*/
 
-void CCanvasPresenter::OnLButtonUp(UINT /*nFlags*/, CPoint /*point*/)
+/*
+void CCanvasPresenter::OnLButtonUp(UINT / *nFlags* /, CPoint / *point* /)
 {
 	if (m_selectedShape)
 	{
@@ -75,7 +78,9 @@ void CCanvasPresenter::OnLButtonUp(UINT /*nFlags*/, CPoint /*point*/)
 		m_lastPoint = boost::none;
 	}
 }
+*/
 
+/*
 void CCanvasPresenter::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if (nFlags & MK_LBUTTON && m_selectedShape)
@@ -93,6 +98,7 @@ void CCanvasPresenter::OnMouseMove(UINT nFlags, CPoint point)
 	}
 }
 
+*/
 void CCanvasPresenter::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 {
 	if ((nChar == VK_DELETE) && m_selectedShape)
@@ -128,6 +134,36 @@ void CCanvasPresenter::InsertShape(std::shared_ptr<IEditableShape> const & shape
 		shapeView = m_canvasView.InsertShape(ShapeViewType::Ellipse, shape->GetRect(), pos);
 		break;
 	}
+
+	struct Context
+	{
+		bool moved = false;
+	};
+
+	auto context = std::make_shared<Context>();
+
+	shapeView->DoOnMousePress([=](IShapeView & /*shape*/) {
+		m_selectedShape = shapeView;
+		m_canvas.SelectShape(shape);
+	});
+
+	shapeView->DoOnMouseRelease([=](IShapeView & /*shape*/, bool /*releaseInside*/) {
+		if (context->moved)
+		{
+			shape->Commit();
+		}
+		context->moved = false;
+	});
+
+	shapeView->DoOnMouseDrag([=](IShapeView & /*shapeView*/, const CRect & targetRect) {
+		shape->SetRect(targetRect);
+		context->moved = true;
+	});
+
+	shape->DoOnShapeChange([=](IEditableShape const * shape) {
+		shapeView->SetRect(shape->GetRect());
+	});
+
 
 	if (pos)
 	{
@@ -166,7 +202,7 @@ void CCanvasPresenter::ChangeShape(std::shared_ptr<IEditableShape> const & shape
 		return;
 	}
 
-	it->shapeView->SetRect(shape->GetRect());
+	//it->shapeView->SetRect(shape->GetRect());
 
 	m_selectedShape = nullptr;
 	m_canvasView.SelectShape(nullptr);

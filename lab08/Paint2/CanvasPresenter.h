@@ -19,9 +19,11 @@ public:
 	void OnCreateEllipse() override;
 	void OnUndo() override;
 	void OnRedo() override;
+/*
 	void OnLButtonDown(UINT nFlags, CPoint point) override;
 	void OnLButtonUp(UINT nFlags, CPoint point) override;
 	void OnMouseMove(UINT nFlags, CPoint point) override;
+*/
 	void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) override;
 	void OnUpdateUndo(CCmdUI * pCmdUI) override;
 	void OnUpdateRedo(CCmdUI * pCmdUI) override;

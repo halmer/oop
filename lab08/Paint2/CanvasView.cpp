@@ -79,5 +79,41 @@ void CCanvasView::Draw(CDC & dc)
 	}
 	dc.SelectObject(oldPen);
 	dc.SelectObject(oldBrush);
+}
 
+void CCanvasView::HandleMouseDown(const CPoint & point)
+{
+	for (auto const & shape : boost::adaptors::reverse(m_shapes))
+	{
+		if (shape->HandleMouseDown(point))
+		{
+			m_capturedShape = shape;
+			m_mousePressPoint = point;
+			return;
+		}
+	}
+
+	m_mousePressPoint = boost::none;
+	m_capturedShape.reset();
+}
+
+void CCanvasView::HandleMouseUp(const CPoint & point)
+{
+	if (m_capturedShape)
+	{
+		m_capturedShape->HandleMouseUp(point);
+		m_mousePressPoint = boost::none;
+	}
+}
+
+void CCanvasView::HandleMouseMove(UINT nFlags, const CPoint & point)
+{
+	if (nFlags & MK_LBUTTON)
+	{
+		if (m_capturedShape && m_mousePressPoint)
+		{
+			m_capturedShape->HandleDrag(point, *m_mousePressPoint);
+			m_mousePressPoint = point;
+		}
+	}
 }

@@ -20,7 +20,11 @@ CEditableShape::~CEditableShape()
 
 void CEditableShape::SetRect(CRect const & rect)
 {
-	m_rect = rect;
+	if (m_rect != rect)
+	{
+		m_rect = rect;
+		m_shapeChange(this);
+	}
 }
 
 void CEditableShape::Offset(CPoint const & delta, OffsetType type)
