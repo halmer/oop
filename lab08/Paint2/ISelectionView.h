@@ -13,8 +13,6 @@ enum class ControlPointType
 class ISelectionView
 {
 public:
-	virtual std::shared_ptr<IShapeView> GetShape() = 0;
-
 	using DragSignal = boost::signals2::signal<void(ControlPointType type, CPoint const & coord)>;
 	virtual void DoOnControlPointDrag(DragSignal::slot_type const & handler) = 0;
 
