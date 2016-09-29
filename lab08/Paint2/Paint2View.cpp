@@ -87,51 +87,63 @@ void CPaint2View::OnContextMenu(CWnd* /* pWnd */, CPoint point)
 #endif
 }
 
+void CPaint2View::SetScroll()
+{
+	auto size = m_canvasView.GetSize();
+
+	SetScrollSizes(MM_TEXT, CSize(size.BottomRight()));
+	Invalidate();
+}
+
 void CPaint2View::OnCreateRectangle()
 {
 	m_presenter.OnCreateRectangle();
-	Invalidate();
+	SetScroll();
 }
 
 void CPaint2View::OnCreateTriangle()
 {
 	m_presenter.OnCreateTriangle();
-	Invalidate();
+	SetScroll();
 }
 
 void CPaint2View::OnCreateEllipse()
 {
 	m_presenter.OnCreateEllipse();
-	Invalidate();
+	SetScroll();
 }
 
 void CPaint2View::OnUndo()
 {
 	m_presenter.OnUndo();
-	Invalidate();
+	SetScroll();
 }
 
 void CPaint2View::OnRedo()
 {
 	m_presenter.OnRedo();
-	Invalidate();
+	SetScroll();
 }
 
 void CPaint2View::OnLButtonDown(UINT nFlags, CPoint point)
 {
+	SetCapture();
+
 	point.Offset(GetDeviceScrollPosition());
-	//m_presenter.OnLButtonDown(nFlags, point);
 	m_canvasView.HandleMouseDown(point);
+	SetScroll();
 
 	CScrollView::OnLButtonDown(nFlags, point);
 }
 
 void CPaint2View::OnLButtonUp(UINT nFlags, CPoint point)
 {
+	ReleaseCapture();
+	
 	point.Offset(GetDeviceScrollPosition());
 	m_canvasView.HandleMouseUp(point);
 
-	Invalidate();
+	SetScroll();
 
 	CScrollView::OnLButtonUp(nFlags, point);
 }
@@ -139,7 +151,6 @@ void CPaint2View::OnLButtonUp(UINT nFlags, CPoint point)
 void CPaint2View::OnMouseMove(UINT nFlags, CPoint point)
 {
 	point.Offset(GetDeviceScrollPosition());
-	//m_presenter.OnMouseMove(nFlags, point);
 	m_canvasView.HandleMouseMove(nFlags, point);
 
 	Invalidate();
@@ -149,8 +160,8 @@ void CPaint2View::OnMouseMove(UINT nFlags, CPoint point)
 
 void CPaint2View::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	m_presenter.OnKeyDown(nChar, nRepCnt, nFlags);
-	Invalidate();
+	m_canvasView.HandleOnKeyDown(nChar);
+	SetScroll();
 
 	CScrollView::OnKeyDown(nChar, nRepCnt, nFlags);
 }

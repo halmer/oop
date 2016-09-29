@@ -16,7 +16,6 @@ CCanvasPresenter::CCanvasPresenter(::IDocument & doc, ICanvasView & canvasView)
 {
 	m_canvas.DoOnInsertShape(std::bind(&CCanvasPresenter::InsertShape, this, std::placeholders::_1, std::placeholders::_2));
 	m_canvas.DoOnDeleteShape(std::bind(&CCanvasPresenter::DeleteShape, this, std::placeholders::_1));
-	m_canvas.DoOnChangeShape(std::bind(&CCanvasPresenter::ChangeShape, this, std::placeholders::_1));
 }
 
 void CCanvasPresenter::InitView(IPaint2View * view)
@@ -42,71 +41,13 @@ void CCanvasPresenter::OnCreateEllipse()
 void CCanvasPresenter::OnUndo()
 {
 	m_doc.Undo();
+	m_canvasView.SelectShape(nullptr);
 }
 
 void CCanvasPresenter::OnRedo()
 {
 	m_doc.Redo();
-}
-
-/*
-void CCanvasPresenter::OnLButtonDown(UINT / *nFlags* /, CPoint point)
-{
-	for (auto const & item : boost::adaptors::reverse(m_shapes))
-	{
-		if (item.shapeView->IsPointInShape(point))
-		{
-			m_selectedShape = item.shapeView;
-			m_canvasView.SelectShape(m_selectedShape);
-			m_canvas.SelectShape(item.editableShape);
-			return;
-		}
-	}
-
-	m_selectedShape = nullptr;
 	m_canvasView.SelectShape(nullptr);
-	m_canvas.SelectShape(nullptr);
-}
-*/
-
-/*
-void CCanvasPresenter::OnLButtonUp(UINT / *nFlags* /, CPoint / *point* /)
-{
-	if (m_selectedShape)
-	{
-		m_canvas.GetSelection()->Commit();
-		m_lastPoint = boost::none;
-	}
-}
-*/
-
-/*
-void CCanvasPresenter::OnMouseMove(UINT nFlags, CPoint point)
-{
-	if (nFlags & MK_LBUTTON && m_selectedShape)
-	{
-		if (!m_lastPoint)
-		{
-			m_lastPoint = point;
-		}
-		
-		auto selection = m_canvas.GetSelection();
-		selection->Offset(point - *m_lastPoint, OffsetType::AllSide);
-		m_selectedShape->SetRect(selection->GetRect());
-
-		m_lastPoint = point;
-	}
-}
-
-*/
-void CCanvasPresenter::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
-{
-	if ((nChar == VK_DELETE) && m_selectedShape)
-	{
-		m_canvas.DeleteSelection();
-		m_canvasView.DeleteShape(m_selectedShape);
-		m_selectedShape = nullptr;
-	}
 }
 
 void CCanvasPresenter::OnUpdateUndo(CCmdUI * pCmdUI)
@@ -143,7 +84,6 @@ void CCanvasPresenter::InsertShape(std::shared_ptr<IEditableShape> const & shape
 	auto context = std::make_shared<Context>();
 
 	shapeView->DoOnMousePress([=](IShapeView & /*shape*/) {
-		m_selectedShape = shapeView;
 		m_canvas.SelectShape(shape);
 	});
 
@@ -158,6 +98,16 @@ void CCanvasPresenter::InsertShape(std::shared_ptr<IEditableShape> const & shape
 	shapeView->DoOnMouseDrag([=](IShapeView & /*shapeView*/, const CRect & targetRect) {
 		shape->SetRect(targetRect);
 		context->moved = true;
+	});
+
+	shapeView->DoOnResizeShape([=](IShapeView & /*shapeView*/, const CRect & targetRect) {
+		shape->SetRect(targetRect);
+		context->moved = true;
+	});
+
+	shapeView->DoOnDeleteShape([=](IShapeView & /*shape*/) {
+		m_canvas.SelectShape(shape);
+		m_canvas.DeleteSelection();
 	});
 
 	shape->DoOnShapeChange([=](IEditableShape const * shape) {
@@ -191,22 +141,6 @@ void CCanvasPresenter::DeleteShape(std::shared_ptr<IEditableShape> const & shape
 
 	m_canvasView.DeleteShape(it->shapeView);
 	m_shapes.erase(it);
-}
-
-void CCanvasPresenter::ChangeShape(std::shared_ptr<IEditableShape> const & shape)
-{
-	auto it = find_if(m_shapes.begin(), m_shapes.end(),
-		[&shape](Data const & data) { return data.editableShape == shape; });
-	if (it == m_shapes.end())
-	{
-		return;
-	}
-
-	//it->shapeView->SetRect(shape->GetRect());
-
-	m_selectedShape = nullptr;
-	m_canvasView.SelectShape(nullptr);
-	m_canvas.SelectShape(nullptr);
 }
 
 CRect CCanvasPresenter::GetDefaultRect() const

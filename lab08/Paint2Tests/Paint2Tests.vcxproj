@@ -178,8 +178,10 @@
     <ClInclude Include="..\Paint2\IEditableCanvas.h" />
     <ClInclude Include="..\Paint2\IEditableShape.h" />
     <ClInclude Include="..\Paint2\ISelection.h" />
+    <ClInclude Include="..\Paint2\ISelectionFrame.h" />
     <ClInclude Include="..\Paint2\IShape.h" />
     <ClInclude Include="..\Paint2\IShapeView.h" />
+    <ClInclude Include="..\Paint2\SelectionFrame.h" />
     <ClInclude Include="..\Paint2\Shape.h" />
     <ClInclude Include="..\Paint2\Selection.h" />
     <ClInclude Include="..\Paint2\ShapeView.h" />
@@ -194,6 +196,7 @@
     <ClCompile Include="..\Paint2\Doc.cpp" />
     <ClCompile Include="..\Paint2\EditableCanvas.cpp" />
     <ClCompile Include="..\Paint2\EditableShape.cpp" />
+    <ClCompile Include="..\Paint2\SelectionFrame.cpp" />
     <ClCompile Include="..\Paint2\Shape.cpp" />
     <ClCompile Include="..\Paint2\Selection.cpp" />
     <ClCompile Include="..\Paint2\ShapeView.cpp" />

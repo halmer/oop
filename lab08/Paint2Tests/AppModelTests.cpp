@@ -96,7 +96,9 @@ BOOST_FIXTURE_TEST_SUITE(AppModelTests, AppModelTests_)
 		editableShape.DoOnShapeChange(action);
 
 		editableShape.SetRect(rect15);
-		BOOST_CHECK(shapePointer == nullptr);
+		BOOST_CHECK(shapePointer == &editableShape);
+		
+		shapePointer = nullptr;
 		editableShape.Commit();
 		BOOST_CHECK(shapePointer == &editableShape);
 	}

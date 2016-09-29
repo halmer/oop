@@ -17,7 +17,7 @@
 
 #include "ICanvasView.h"
 #include "IShapeView.h"
-#include "ISelectionView.h"
+#include "ISelectionFrame.h"
 
 #include "IShape.h"
 #include "ICanvas.h"

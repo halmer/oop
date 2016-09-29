@@ -48,9 +48,6 @@
     <ClInclude Include="ICanvasView.h">
       <Filter>View</Filter>
     </ClInclude>
-    <ClInclude Include="ISelectionView.h">
-      <Filter>View</Filter>
-    </ClInclude>
     <ClInclude Include="IShapeView.h">
       <Filter>View</Filter>
     </ClInclude>
@@ -114,6 +111,12 @@
     <ClInclude Include="signals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ISelectionFrame.h">
+      <Filter>View</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectionFrame.h">
+      <Filter>View</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Paint2.cpp">
@@ -159,6 +162,9 @@
       <Filter>View</Filter>
     </ClCompile>
     <ClCompile Include="CanvasView.cpp">
+      <Filter>View</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectionFrame.cpp">
       <Filter>View</Filter>
     </ClCompile>
   </ItemGroup>

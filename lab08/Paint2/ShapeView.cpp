@@ -14,6 +14,11 @@ void CShapeView::SetRect(CRect const & rect)
 	m_rect = rect;
 }
 
+CRect CShapeView::GetRect() const
+{
+	return m_rect;
+}
+
 static map<ShapeViewType, function<void(CDC*, CRect)>> const drawingShapes{
 	{ ShapeViewType::Rectangle,
 		bind(static_cast<BOOL(CDC::*)(LPCRECT)>(&CDC::Rectangle), placeholders::_1, placeholders::_2)
@@ -59,26 +64,46 @@ void CShapeView::HandleMouseUp(CPoint const & point)
 	m_mouseReleaseSignal(*this, HitTest(point));
 }
 
-void CShapeView::HandleDrag(CPoint const& point, CPoint const& oldPoint)
+void CShapeView::HandleDrag(CPoint const & point, CPoint const & oldPoint)
 {
 	CRect targetRect = m_rect;
 	targetRect.OffsetRect(point - oldPoint);
 	m_mouseDragSignal(*this, targetRect);
 }
 
-Connection CShapeView::DoOnMousePress(const MousePressSignal::slot_type & handler)
+void CShapeView::HandleResizeShape(CRect const & rect)
+{
+	m_resizeShapeSignal(*this, rect);
+}
+
+void CShapeView::HandleDeleteShape()
+{
+	m_deleteShapeSignal(*this);
+}
+
+Connection CShapeView::DoOnMousePress(MousePressSignal::slot_type const & handler)
 {
 	return m_mousePressSignal.connect(handler);
 }
 
-Connection CShapeView::DoOnMouseRelease(const MouseReleaseSignal::slot_type & handler)
+Connection CShapeView::DoOnMouseRelease(MouseReleaseSignal::slot_type const & handler)
 {
 	return m_mouseReleaseSignal.connect(handler);
 }
 
-Connection CShapeView::DoOnMouseDrag(const MouseDragSignal::slot_type & handler)
+Connection CShapeView::DoOnMouseDrag(MouseDragSignal::slot_type const & handler)
 {
 	return m_mouseDragSignal.connect(handler);
+}
+
+Connection CShapeView::DoOnResizeShape(ResizeShapeSignal::slot_type const & handler)
+{
+	return m_resizeShapeSignal.connect(handler);
+}
+
+Connection CShapeView::DoOnDeleteShape(DeleteShapeSignal::slot_type const & handler)
+{
+	return m_deleteShapeSignal.connect(handler);
 }
 
 static map<ShapeViewType, function<bool(CRect const &, CPoint const &)>> const pointInShape{
