@@ -1,5 +1,6 @@
 #pragma once
 #include "IEditableShape.h"
+#include "signals.h"
 
 class CHistory;
 
@@ -21,5 +22,5 @@ private:
 	std::shared_ptr<IShape> m_shape;
 	CHistory & m_history;
 	ShapeChangeSignal m_shapeChange;
-	boost::signals2::connection m_connection;
+	ScopedConnection m_connection;
 };

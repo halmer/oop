@@ -33,7 +33,6 @@ private:
 	CHistory & m_history;
 	std::vector<Data> m_shapes;
 	std::shared_ptr<IEditableShape> m_selectedShape;
-	size_t m_selectedShapeIndex;
 	InsertShapeSignal m_insertShape;
 	DeleteShapeSignal m_deleteShape;
 	ChangeShapeSignal m_changeShape;

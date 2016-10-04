@@ -15,7 +15,7 @@ CEditableShape::CEditableShape(std::shared_ptr<IShape> const & shape, CHistory &
 
 CEditableShape::~CEditableShape()
 {
-	m_connection.disconnect();
+	std::cout << "CEditableShape::~CEditableShape()\n";
 }
 
 void CEditableShape::SetRect(CRect const & rect)

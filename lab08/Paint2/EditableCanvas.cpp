@@ -6,7 +6,6 @@
 CEditableCanvas::CEditableCanvas(ICanvas & canvas, CHistory & history)
 	: m_canvas(canvas)
 	, m_history(history)
-	, m_selectedShapeIndex(0)
 {
 	m_canvas.DoOnInsertShape(std::bind(&CEditableCanvas::InsertShape, this, std::placeholders::_1, std::placeholders::_2));
 	m_canvas.DoOnDeleteShape(std::bind(&CEditableCanvas::DeleteShape, this, std::placeholders::_1));
@@ -28,7 +27,6 @@ void CEditableCanvas::SelectShape(std::shared_ptr<IEditableShape> const & shape)
 	{
 		if (m_shapes[i].editableShape == shape)
 		{
-			m_selectedShapeIndex = i;
 			m_selectedShape = shape;
 
 			return;
@@ -40,22 +38,24 @@ void CEditableCanvas::SelectShape(std::shared_ptr<IEditableShape> const & shape)
 
 void CEditableCanvas::DeleteSelection()
 {
-	if (!m_selectedShape)
-	{
-		return;
-	}
-
-	m_history.AddCommandAndExecute({
-		std::bind(&ICanvas::DeleteShape, &m_canvas, m_shapes[m_selectedShapeIndex].shape),
-		std::bind(&ICanvas::InsertShape, &m_canvas, m_shapes[m_selectedShapeIndex].shape, m_selectedShapeIndex)
+	auto it = boost::find_if(m_shapes, [this](auto & data) {
+		return data.editableShape == m_selectedShape;
 	});
 
-	m_selectedShape = nullptr;
+	if (it != m_shapes.end())
+	{
+		m_history.AddCommandAndExecute({
+			std::bind(&ICanvas::DeleteShape, &m_canvas, it->shape),
+			std::bind(&ICanvas::InsertShape, &m_canvas, it->shape, it - m_shapes.begin())
+		});
+
+		m_selectedShape = nullptr;
+	}
 }
 
 std::shared_ptr<IEditableShape> CEditableCanvas::GetSelection()
 {	
-	return m_shapes[m_selectedShapeIndex].editableShape;
+	return m_selectedShape;
 }
 
 size_t CEditableCanvas::GetShapeCount() const
@@ -119,6 +119,7 @@ void CEditableCanvas::DeleteShape(std::shared_ptr<IShape> const & shape)
 		return;
 	}
 
+	m_selectedShape.reset();
 	m_deleteShape(it->editableShape);
 	
 	m_shapes.erase(it);

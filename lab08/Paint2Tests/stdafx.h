@@ -17,6 +17,7 @@
 #pragma warning (disable: 4702)
 #include <boost/test/unit_test.hpp>
 #include <boost/algorithm/string/replace.hpp>
+#include <boost/range/algorithm/find_if.hpp>
 
 #include <memory>
 #include <vector>
