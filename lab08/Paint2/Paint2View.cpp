@@ -150,6 +150,8 @@ void CPaint2View::OnLButtonUp(UINT nFlags, CPoint point)
 
 void CPaint2View::OnMouseMove(UINT nFlags, CPoint point)
 {
+	SetClassLong(GetSafeHwnd(), GCL_HCURSOR, NULL);
+	
 	point.Offset(GetDeviceScrollPosition());
 	m_canvasView.HandleMouseMove(nFlags, point);
 

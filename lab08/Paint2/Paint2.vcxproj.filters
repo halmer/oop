@@ -117,6 +117,9 @@
     <ClInclude Include="SelectionFrame.h">
       <Filter>View</Filter>
     </ClInclude>
+    <ClInclude Include="XmlReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Paint2.cpp">
@@ -166,6 +169,9 @@
     </ClCompile>
     <ClCompile Include="SelectionFrame.cpp">
       <Filter>View</Filter>
+    </ClCompile>
+    <ClCompile Include="XmlReader.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

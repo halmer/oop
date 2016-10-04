@@ -33,7 +33,7 @@
 #endif
 #endif
 
-#pragma comment (linker, "/SUBSYSTEM:CONSOLE")
+//#pragma comment (linker, "/SUBSYSTEM:CONSOLE")
 #pragma warning(push)
 #pragma warning(disable: 4996)
 #include <boost/signals2.hpp>
@@ -43,4 +43,5 @@
 #include <boost/range/adaptor/reversed.hpp>
 #include <vector>
 #include <map>
+#include "../Paint/pugixml.hpp"
 #include <iostream>

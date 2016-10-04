@@ -8,6 +8,15 @@ CDoc::CDoc(ICanvas & canvas)
 {
 }
 
+void CDoc::NewDocument()
+{
+	while (m_history.CanUndo())
+	{
+		m_history.Undo();
+	}
+	m_history.Reset();
+}
+
 IEditableCanvas & CDoc::GetCanvas()
 {
 	return m_editableCanvas;

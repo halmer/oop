@@ -1,5 +1,6 @@
 #pragma once
 #include "ICommandSourceDelegate.h"
+#include "ISelectionFrame.h"
 
 class IDocument;
 class IEditableCanvas;
@@ -25,6 +26,7 @@ public:
 private:
 	void InsertShape(std::shared_ptr<IEditableShape> const & shape, boost::optional<size_t> pos);
 	void DeleteShape(std::shared_ptr<IEditableShape> const & shape);
+	void OffsetShape(ControlPointType type, CPoint const & delta);
 	CRect GetDefaultRect() const;
 
 	struct Data

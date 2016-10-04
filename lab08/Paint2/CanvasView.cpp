@@ -3,9 +3,13 @@
 #include "ShapeView.h"
 
 CCanvasView::CCanvasView()
-	: m_pen(PS_SOLID, 2, RGB(255, 0, 0))
+	: m_selectedControlPoint(ControlPointType::NotSelected)
+	, m_pen(PS_SOLID, 2, RGB(255, 0, 0))
 	, m_brush(RGB(255, 255, 0))
-	, m_selectedControlPoint(ControlPointType::NotSelected)
+	, m_cursorArrow(AfxGetApp()->LoadStandardCursor(IDC_ARROW))
+	, m_cursorSizeAll(AfxGetApp()->LoadStandardCursor(IDC_SIZEALL))
+	, m_cursorSizeNWSE(AfxGetApp()->LoadStandardCursor(IDC_SIZENWSE))
+	, m_cursorSizeNESW(AfxGetApp()->LoadStandardCursor(IDC_SIZENESW))
 {
 }
 
@@ -59,9 +63,9 @@ void CCanvasView::SelectShape(std::shared_ptr<IShapeView> const & shape)
 	m_capturedShape = *it;
 }
 
-std::shared_ptr<ISelectionFrame> CCanvasView::GetSelection()
+ISelectionFrame & CCanvasView::GetSelectionFrame()
 {
-	return std::shared_ptr<ISelectionFrame>();
+	return m_frame;
 }
 
 size_t CCanvasView::GetShapeCount() const
@@ -145,7 +149,15 @@ void CCanvasView::HandleMouseUp(CPoint const & point)
 {
 	if (m_capturedShape)
 	{
-		m_capturedShape->HandleMouseUp(point);
+		if (m_selectedControlPoint != ControlPointType::NotSelected)
+		{
+			m_frame.HandleDragEnd();
+		}
+		else
+		{
+			m_capturedShape->HandleMouseUp(point);
+		}
+		
 		m_mousePressPoint = boost::none;
 		m_selectedControlPoint = ControlPointType::NotSelected;
 	}
@@ -157,9 +169,10 @@ void CCanvasView::HandleMouseMove(UINT nFlags, CPoint const & point)
 	{
 		if (m_selectedControlPoint != ControlPointType::NotSelected)
 		{
-			m_frame.ResizeFrame(m_selectedControlPoint, point - *m_mousePressPoint);
-			m_capturedShape->HandleResizeShape(m_frame.GetFrame());
+			m_frame.HandleDrag(m_selectedControlPoint, point - *m_mousePressPoint);
 			m_mousePressPoint = point;
+
+			ChangeCursor(true, true);
 		}
 		else if (m_capturedShape)
 		{
@@ -167,6 +180,11 @@ void CCanvasView::HandleMouseMove(UINT nFlags, CPoint const & point)
 			m_mousePressPoint = point;
 		}
 	}
+	else
+	{
+		SetCanvasCursor(point);
+	}
+
 }
 
 void CCanvasView::HandleOnKeyDown(UINT nChar)
@@ -175,5 +193,57 @@ void CCanvasView::HandleOnKeyDown(UINT nChar)
 	{
 		m_capturedShape->HandleDeleteShape();
 		m_capturedShape = nullptr;
+	}
+}
+
+void CCanvasView::SetCanvasCursor(CPoint const & point)
+{
+	if (m_capturedShape)
+	{
+		m_selectedControlPoint = m_frame.GetSelectedControlPoint(point);
+		if (m_selectedControlPoint != ControlPointType::NotSelected)
+		{
+			ChangeCursor(true, true);
+			return;
+		}
+	}
+
+	for (auto const & shape : boost::adaptors::reverse(m_shapes))
+	{
+		if (shape->IsPointInShape(point))
+		{
+			ChangeCursor(true, false);
+			return;
+		}
+	}
+
+	ChangeCursor(false, false);
+}
+
+void CCanvasView::ChangeCursor(bool isCapturedShape, bool isSelectedControlPoint)
+{
+	if (isCapturedShape && isSelectedControlPoint)
+	{
+		if (   m_selectedControlPoint == ControlPointType::NorthWest
+			|| m_selectedControlPoint == ControlPointType::SouthEast)
+		{
+			m_frame.IsInvertedCursor()
+				? SetCursor(m_cursorSizeNESW)
+				: SetCursor(m_cursorSizeNWSE);
+		}
+		else
+		{
+			m_frame.IsInvertedCursor()
+				? SetCursor(m_cursorSizeNWSE)
+				: SetCursor(m_cursorSizeNESW);
+		}
+	}
+	else if (isCapturedShape && !isSelectedControlPoint)
+	{
+		SetCursor(m_cursorSizeAll);
+	}
+	else
+	{
+		SetCursor(m_cursorArrow);
 	}
 }

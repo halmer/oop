@@ -47,6 +47,16 @@ void CShapeView::DrawShape(CDC * pDC)
 	}
 }
 
+bool CShapeView::IsPointInShape(CPoint const & point) const
+{
+	if (!HitTest(point))
+	{
+		return false;
+	}
+
+	return true;
+}
+
 bool CShapeView::HandleMouseDown(CPoint const & point)
 {
 	if (!HitTest(point))

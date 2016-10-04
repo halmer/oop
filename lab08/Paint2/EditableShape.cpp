@@ -29,6 +29,8 @@ void CEditableShape::SetRect(CRect const & rect)
 
 void CEditableShape::Offset(CPoint const & delta, OffsetType type)
 {
+	CRect rect = m_rect;
+
 	switch (type)
 	{
 	case OffsetType::AllSide:
@@ -50,6 +52,11 @@ void CEditableShape::Offset(CPoint const & delta, OffsetType type)
 		break;
 	default:
 		break;
+	}
+
+	if (m_rect != rect)
+	{
+		m_shapeChange(this);
 	}
 }
 

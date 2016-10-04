@@ -1,18 +1,4 @@
-// This MFC Samples source code demonstrates using MFC Microsoft Office Fluent User Interface 
-// (the "Fluent UI") and is provided only as referential material to supplement the 
-// Microsoft Foundation Classes Reference and related electronic documentation 
-// included with the MFC C++ library software.  
-// License terms to copy, use or distribute the Fluent UI are available separately.  
-// To learn more about our Fluent UI licensing program, please visit 
-// http://go.microsoft.com/fwlink/?LinkId=238214.
-//
-// Copyright (C) Microsoft Corporation
-// All rights reserved.
-
-// Paint2Doc.cpp : implementation of the CPaint2Doc class
-//
-
-#include "stdafx.h"
+ #include "stdafx.h"
 // SHARED_HANDLERS can be defined in an ATL project implementing preview, thumbnail
 // and search filter handlers and allows sharing of document code with that project.
 #ifndef SHARED_HANDLERS
@@ -20,27 +6,29 @@
 #endif
 
 #include "Paint2Doc.h"
-
 #include <propkey.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-// CPaint2Doc
-
 IMPLEMENT_DYNCREATE(CPaint2Doc, CDocument)
 
 BEGIN_MESSAGE_MAP(CPaint2Doc, CDocument)
 END_MESSAGE_MAP()
 
-
-// CPaint2Doc construction/destruction
-
 CPaint2Doc::CPaint2Doc()
 {
-	// TODO: add one-time construction code here
-
+	auto & editableCanvas = theApp.m_doc.GetCanvas();
+	editableCanvas.DoOnInsertShape([this](std::shared_ptr<IEditableShape> const & /*shape*/, boost::optional<size_t> /*position*/) {
+		SetModifiedFlag();
+	});
+	editableCanvas.DoOnDeleteShape([this](std::shared_ptr<IEditableShape> const & /*shape*/) {
+		SetModifiedFlag();
+	});
+	editableCanvas.DoOnChangeShape([this](std::shared_ptr<IEditableShape> const & /*shape*/) {
+		SetModifiedFlag();
+	});
 }
 
 CPaint2Doc::~CPaint2Doc()
@@ -51,17 +39,11 @@ BOOL CPaint2Doc::OnNewDocument()
 {
 	if (!CDocument::OnNewDocument())
 		return FALSE;
-
-	// TODO: add reinitialization code here
-	// (SDI documents will reuse this document)
+	
+	theApp.m_doc.NewDocument();
 
 	return TRUE;
 }
-
-
-
-
-// CPaint2Doc serialization
 
 void CPaint2Doc::Serialize(CArchive& ar)
 {
@@ -129,8 +111,6 @@ void CPaint2Doc::SetSearchContent(const CString& value)
 
 #endif // SHARED_HANDLERS
 
-// CPaint2Doc diagnostics
-
 #ifdef _DEBUG
 void CPaint2Doc::AssertValid() const
 {
@@ -142,6 +122,3 @@ void CPaint2Doc::Dump(CDumpContext& dc) const
 	CDocument::Dump(dc);
 }
 #endif //_DEBUG
-
-
-// CPaint2Doc commands

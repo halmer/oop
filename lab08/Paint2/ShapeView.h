@@ -8,6 +8,7 @@ public:
 	void SetRect(CRect const & rect) override;
 	CRect GetRect() const;
 	void DrawShape(CDC * pDC) override;
+	bool IsPointInShape(CPoint const & point) const;
 
 	bool HandleMouseDown(CPoint const & point);
 	void HandleMouseUp(CPoint const & point);

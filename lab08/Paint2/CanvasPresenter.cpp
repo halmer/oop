@@ -16,6 +16,13 @@ CCanvasPresenter::CCanvasPresenter(::IDocument & doc, ICanvasView & canvasView)
 {
 	m_canvas.DoOnInsertShape(std::bind(&CCanvasPresenter::InsertShape, this, std::placeholders::_1, std::placeholders::_2));
 	m_canvas.DoOnDeleteShape(std::bind(&CCanvasPresenter::DeleteShape, this, std::placeholders::_1));
+
+	auto & frame = m_canvasView.GetSelectionFrame();
+	frame.DoOnControlPointDrag(std::bind(&CCanvasPresenter::OffsetShape, this, std::placeholders::_1, std::placeholders::_2));
+	frame.DoOnDragEnd([this]() {
+		auto shape = m_canvas.GetSelection();
+		shape->Commit();
+	});
 }
 
 void CCanvasPresenter::InitView(IPaint2View * view)
@@ -110,10 +117,13 @@ void CCanvasPresenter::InsertShape(std::shared_ptr<IEditableShape> const & shape
 		m_canvas.DeleteSelection();
 	});
 
+	std::weak_ptr<IShapeView> shapeViewWeak(shapeView);
 	shape->DoOnShapeChange([=](IEditableShape const * shape) {
-		shapeView->SetRect(shape->GetRect());
+		if (auto shapeView = shapeViewWeak.lock())
+		{
+			shapeView->SetRect(shape->GetRect());
+		}
 	});
-
 
 	if (pos)
 	{
@@ -141,6 +151,29 @@ void CCanvasPresenter::DeleteShape(std::shared_ptr<IEditableShape> const & shape
 
 	m_canvasView.DeleteShape(it->shapeView);
 	m_shapes.erase(it);
+}
+
+void CCanvasPresenter::OffsetShape(ControlPointType type, CPoint const & delta)
+{
+	auto shape = m_canvas.GetSelection();
+
+	switch (type)
+	{
+	case ControlPointType::NorthWest:
+		shape->Offset(delta, OffsetType::TopLeft);
+		break;
+	case ControlPointType::NorthEast:
+		shape->Offset(delta, OffsetType::TopRight);
+		break;
+	case ControlPointType::SouthWest:
+		shape->Offset(delta, OffsetType::BottomLeft);
+		break;
+	case ControlPointType::SouthEast:
+		shape->Offset(delta, OffsetType::BottomRight);
+		break;
+	case ControlPointType::NotSelected:
+		break;
+	}
 }
 
 CRect CCanvasPresenter::GetDefaultRect() const

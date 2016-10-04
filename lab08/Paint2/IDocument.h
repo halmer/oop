@@ -5,6 +5,7 @@ class IEditableCanvas;
 class IDocument
 {
 public:
+	virtual void NewDocument() = 0;
 	virtual IEditableCanvas & GetCanvas() = 0;
 	virtual void Undo() = 0;
 	virtual void Redo() = 0;

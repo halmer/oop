@@ -8,6 +8,7 @@ class CDoc : public ::IDocument
 {
 public:
 	CDoc(ICanvas & canvas);
+	void NewDocument() override;
 	IEditableCanvas & GetCanvas() override;
 	void Undo() override;
 	void Redo() override;
