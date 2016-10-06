@@ -4,11 +4,6 @@
 #include "Shape.h"
 #include "../Paint/pugixml.hpp"
 
-CXmlReader::CXmlReader(ICanvas & canvas)
-	: m_canvas(canvas)
-{
-}
-
 void CXmlReader::ReadData(CArchive & ar)
 {
 	CFile * file = ar.GetFile();

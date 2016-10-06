@@ -3,6 +3,11 @@
 #include "CanvasPresenter.h"
 #include "CanvasView.h"
 
+struct ViewCreationParams : CCreateContext
+{
+	
+};
+
 class CPaint2View : public CScrollView, IPaint2View
 {
 public:

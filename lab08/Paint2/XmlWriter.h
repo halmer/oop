@@ -5,9 +5,6 @@ class ICanvas;
 class CXmlWriter
 {
 public:
-	CXmlWriter(ICanvas & canvas);
-	void WriteData(CArchive & ar);
+	void SaveCanvas(CArchive & ar, const ICanvas & canvas);
 
-private:
-	ICanvas & m_canvas;
 };

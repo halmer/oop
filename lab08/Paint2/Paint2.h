@@ -5,8 +5,6 @@
 #endif
 
 #include "resource.h"
-#include "Canvas.h"
-#include "Doc.h"
 
 class CPaint2App : public CWinAppEx
 {
@@ -21,9 +19,6 @@ public:
 	afx_msg void OnAppAbout();
 	DECLARE_MESSAGE_MAP()
 
-public:
-	CCanvas m_canvas;
-	CDoc m_doc;
 };
 
 extern CPaint2App theApp;

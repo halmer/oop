@@ -4,11 +4,6 @@
 #include "IShape.h"
 #include "../Paint/pugixml.hpp"
 
-CXmlWriter::CXmlWriter(ICanvas & canvas)
-	: m_canvas(canvas)
-{
-}
-
 void CXmlWriter::WriteData(CArchive & ar)
 {
 	pugi::xml_document doc;

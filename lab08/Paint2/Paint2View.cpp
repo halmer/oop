@@ -48,6 +48,8 @@ void CPaint2View::OnInitialUpdate()
 
 BOOL CPaint2View::PreCreateWindow(CREATESTRUCT& cs)
 {
+	auto doc = GetDocument();
+
 	return CScrollView::PreCreateWindow(cs);
 }
 

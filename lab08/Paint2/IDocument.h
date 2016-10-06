@@ -5,6 +5,8 @@ class IEditableCanvas;
 class IDocument
 {
 public:
+	virtual void Save(const std::function<void(const ICanvas & canvas)> & saver) = 0;
+
 	virtual void NewDocument() = 0;
 	virtual IEditableCanvas & GetCanvas() = 0;
 	virtual void Undo() = 0;

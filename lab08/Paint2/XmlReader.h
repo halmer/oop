@@ -5,9 +5,6 @@ class ICanvas;
 class CXmlReader
 {
 public:
-	CXmlReader(ICanvas & canvas);
-	void ReadData(CArchive & ar);
+	std::unique_ptr<ICanvas> LoadCanvas(CArchive & ar);
 
-private:
-	ICanvas & m_canvas;
 };

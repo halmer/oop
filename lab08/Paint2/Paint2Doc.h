@@ -1,6 +1,7 @@
 #pragma once
 #include "XmlReader.h"
 #include "XmlWriter.h"
+#include "Doc.h"
 
 class CPaint2Doc : public CDocument
 {
@@ -18,8 +19,10 @@ protected:
 #endif
 
 private:
-	CXmlReader m_reader;
-	CXmlWriter m_writer;
+	CXmlReader m_reader; // TODO: move to Serialize
+	CXmlWriter m_writer; // TODO: move to Serialize
+
+	std::unique_ptr<::IDocument> m_doc;
 
 public:
 #ifdef _DEBUG
