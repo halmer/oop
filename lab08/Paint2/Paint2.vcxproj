@@ -93,6 +93,7 @@
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
+      <AdditionalOptions>/Zm130 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -116,6 +117,7 @@
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
+      <AdditionalOptions>/Zm130 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -140,6 +142,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalOptions>/Zm130 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -166,6 +169,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalOptions>/Zm130 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -198,7 +202,6 @@
     <ClInclude Include="IEditableCanvas.h" />
     <ClInclude Include="IEditableShape.h" />
     <ClInclude Include="IPaint2View.h" />
-    <ClInclude Include="ISelection.h" />
     <ClInclude Include="ISelectionFrame.h" />
     <ClInclude Include="IShape.h" />
     <ClInclude Include="IShapeView.h" />
@@ -209,15 +212,21 @@
     <ClInclude Include="Paint2Doc.h" />
     <ClInclude Include="Paint2View.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="Selection.h" />
     <ClInclude Include="ShapeView.h" />
     <ClInclude Include="signals.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="XmlReader.h" />
+    <ClInclude Include="XmlWriter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Paint\History.cpp" />
+    <ClCompile Include="..\Paint\pugixml.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="CanvasPresenter.cpp" />
     <ClCompile Include="CanvasView.cpp" />
@@ -230,7 +239,6 @@
     <ClCompile Include="Paint2.cpp" />
     <ClCompile Include="Paint2Doc.cpp" />
     <ClCompile Include="Paint2View.cpp" />
-    <ClCompile Include="Selection.cpp" />
     <ClCompile Include="ShapeView.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -239,6 +247,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="XmlReader.cpp" />
+    <ClCompile Include="XmlWriter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Paint2.rc" />

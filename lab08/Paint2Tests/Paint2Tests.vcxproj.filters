@@ -39,19 +39,10 @@
     <ClInclude Include="..\Paint2\IEditableShape.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
-    <ClInclude Include="..\Paint\History.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
     <ClInclude Include="..\Paint2\EditableCanvas.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
     <ClInclude Include="..\Paint2\IEditableCanvas.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Paint2\ISelection.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Paint2\Selection.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
     <ClInclude Include="..\Paint2\Shape.h">
@@ -84,6 +75,9 @@
     <ClInclude Include="..\Paint2\SelectionFrame.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
+    <ClInclude Include="..\Paint\History.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -104,13 +98,7 @@
     <ClCompile Include="..\Paint2\EditableShape.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
-    <ClCompile Include="..\Paint\History.cpp">
-      <Filter>Файлы исходного кода</Filter>
-    </ClCompile>
     <ClCompile Include="..\Paint2\EditableCanvas.cpp">
-      <Filter>Файлы исходного кода</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Paint2\Selection.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
     <ClCompile Include="..\Paint2\Shape.cpp">
@@ -132,6 +120,9 @@
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
     <ClCompile Include="..\Paint2\SelectionFrame.cpp">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Paint\History.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
   </ItemGroup>

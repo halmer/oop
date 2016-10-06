@@ -25,6 +25,39 @@
     <Filter Include="Presenter">
       <UniqueIdentifier>{f029bb15-b3b5-4593-9f2e-48b8de5bc3d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AppModel\EditableCanvas">
+      <UniqueIdentifier>{0f771e86-0f4a-4d0a-ac41-ccd031146a6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AppModel\EditableShape">
+      <UniqueIdentifier>{8e51f56c-c464-429f-9617-f5419ef8f318}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AppModel\Document">
+      <UniqueIdentifier>{8a168052-3189-4895-9299-58c6ed643886}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DomainModel\Canvas">
+      <UniqueIdentifier>{e2cf2866-4714-4180-adb2-20bf76cf438b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DomainModel\Shape">
+      <UniqueIdentifier>{5d51f430-b54f-4b84-94ae-0094f2498104}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="View\CanvasView">
+      <UniqueIdentifier>{549f7a5d-f0e7-4390-8aee-847d64d387d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="View\ShapeView">
+      <UniqueIdentifier>{7066d410-ae4d-4b8b-a41b-6fdc39c8e2b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="View\SelectionFrame">
+      <UniqueIdentifier>{0262f4c9-6398-4234-84fe-38811cdc9ac7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="View\Paint2View">
+      <UniqueIdentifier>{36fcd65e-20e6-4aa2-bfe2-83133bd8f6d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AppModel\Paint2Doc">
+      <UniqueIdentifier>{9ca09ec1-40fe-4aba-a3fc-8ddb7a5af3fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AppModel\Xml">
+      <UniqueIdentifier>{231775f9-60f3-4952-924d-be85132a4eb3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Paint2.h">
@@ -39,86 +72,83 @@
     <ClInclude Include="MainFrm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Paint2Doc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ICanvasView.h">
-      <Filter>View</Filter>
-    </ClInclude>
-    <ClInclude Include="IShapeView.h">
-      <Filter>View</Filter>
-    </ClInclude>
-    <ClInclude Include="Paint2View.h">
-      <Filter>View</Filter>
-    </ClInclude>
-    <ClInclude Include="ICanvas.h">
-      <Filter>DomainModel</Filter>
-    </ClInclude>
-    <ClInclude Include="IShape.h">
-      <Filter>DomainModel</Filter>
-    </ClInclude>
-    <ClInclude Include="Canvas.h">
-      <Filter>DomainModel</Filter>
-    </ClInclude>
-    <ClInclude Include="IEditableShape.h">
-      <Filter>AppModel</Filter>
-    </ClInclude>
-    <ClInclude Include="EditableShape.h">
-      <Filter>AppModel</Filter>
-    </ClInclude>
-    <ClInclude Include="IEditableCanvas.h">
-      <Filter>AppModel</Filter>
-    </ClInclude>
-    <ClInclude Include="EditableCanvas.h">
-      <Filter>AppModel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Paint\History.h">
-      <Filter>AppModel</Filter>
-    </ClInclude>
-    <ClInclude Include="ISelection.h">
-      <Filter>AppModel</Filter>
-    </ClInclude>
-    <ClInclude Include="Selection.h">
-      <Filter>AppModel</Filter>
-    </ClInclude>
-    <ClInclude Include="Shape.h">
-      <Filter>DomainModel</Filter>
-    </ClInclude>
-    <ClInclude Include="IDocument.h">
-      <Filter>AppModel</Filter>
-    </ClInclude>
-    <ClInclude Include="Doc.h">
-      <Filter>AppModel</Filter>
     </ClInclude>
     <ClInclude Include="CanvasPresenter.h">
       <Filter>Presenter</Filter>
     </ClInclude>
-    <ClInclude Include="ICommandSourceDelegate.h">
-      <Filter>View</Filter>
-    </ClInclude>
-    <ClInclude Include="ShapeView.h">
-      <Filter>View</Filter>
-    </ClInclude>
-    <ClInclude Include="CanvasView.h">
-      <Filter>View</Filter>
-    </ClInclude>
-    <ClInclude Include="IPaint2View.h">
-      <Filter>View</Filter>
-    </ClInclude>
     <ClInclude Include="signals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EditableCanvas.h">
+      <Filter>AppModel\EditableCanvas</Filter>
+    </ClInclude>
+    <ClInclude Include="EditableShape.h">
+      <Filter>AppModel\EditableShape</Filter>
+    </ClInclude>
+    <ClInclude Include="IEditableShape.h">
+      <Filter>AppModel\EditableShape</Filter>
+    </ClInclude>
+    <ClInclude Include="IEditableCanvas.h">
+      <Filter>AppModel\EditableCanvas</Filter>
+    </ClInclude>
+    <ClInclude Include="Doc.h">
+      <Filter>AppModel\Document</Filter>
+    </ClInclude>
+    <ClInclude Include="IDocument.h">
+      <Filter>AppModel\Document</Filter>
+    </ClInclude>
+    <ClInclude Include="Canvas.h">
+      <Filter>DomainModel\Canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="ICanvas.h">
+      <Filter>DomainModel\Canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="IShape.h">
+      <Filter>DomainModel\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="Shape.h">
+      <Filter>DomainModel\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="CanvasView.h">
+      <Filter>View\CanvasView</Filter>
+    </ClInclude>
+    <ClInclude Include="ICanvasView.h">
+      <Filter>View\CanvasView</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeView.h">
+      <Filter>View\ShapeView</Filter>
+    </ClInclude>
+    <ClInclude Include="IShapeView.h">
+      <Filter>View\ShapeView</Filter>
+    </ClInclude>
     <ClInclude Include="ISelectionFrame.h">
-      <Filter>View</Filter>
+      <Filter>View\SelectionFrame</Filter>
     </ClInclude>
     <ClInclude Include="SelectionFrame.h">
-      <Filter>View</Filter>
+      <Filter>View\SelectionFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="ICommandSourceDelegate.h">
+      <Filter>Presenter</Filter>
+    </ClInclude>
+    <ClInclude Include="IPaint2View.h">
+      <Filter>View\Paint2View</Filter>
+    </ClInclude>
+    <ClInclude Include="Paint2View.h">
+      <Filter>View\Paint2View</Filter>
+    </ClInclude>
+    <ClInclude Include="Paint2Doc.h">
+      <Filter>AppModel\Paint2Doc</Filter>
     </ClInclude>
     <ClInclude Include="XmlReader.h">
-      <Filter>Header Files</Filter>
+      <Filter>AppModel\Xml</Filter>
+    </ClInclude>
+    <ClInclude Include="XmlWriter.h">
+      <Filter>AppModel\Xml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Paint\History.h">
+      <Filter>AppModel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -131,47 +161,50 @@
     <ClCompile Include="MainFrm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Paint2Doc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Paint2View.cpp">
-      <Filter>View</Filter>
-    </ClCompile>
-    <ClCompile Include="Canvas.cpp">
-      <Filter>DomainModel</Filter>
-    </ClCompile>
-    <ClCompile Include="EditableShape.cpp">
-      <Filter>AppModel</Filter>
-    </ClCompile>
-    <ClCompile Include="EditableCanvas.cpp">
-      <Filter>AppModel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Paint\History.cpp">
-      <Filter>AppModel</Filter>
-    </ClCompile>
-    <ClCompile Include="Selection.cpp">
-      <Filter>AppModel</Filter>
-    </ClCompile>
-    <ClCompile Include="Shape.cpp">
-      <Filter>DomainModel</Filter>
-    </ClCompile>
-    <ClCompile Include="Doc.cpp">
-      <Filter>AppModel</Filter>
-    </ClCompile>
     <ClCompile Include="CanvasPresenter.cpp">
       <Filter>Presenter</Filter>
     </ClCompile>
-    <ClCompile Include="ShapeView.cpp">
-      <Filter>View</Filter>
+    <ClCompile Include="..\Paint\pugixml.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EditableCanvas.cpp">
+      <Filter>AppModel\EditableCanvas</Filter>
+    </ClCompile>
+    <ClCompile Include="EditableShape.cpp">
+      <Filter>AppModel\EditableShape</Filter>
+    </ClCompile>
+    <ClCompile Include="Doc.cpp">
+      <Filter>AppModel\Document</Filter>
+    </ClCompile>
+    <ClCompile Include="Canvas.cpp">
+      <Filter>DomainModel\Canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape.cpp">
+      <Filter>DomainModel\Shape</Filter>
     </ClCompile>
     <ClCompile Include="CanvasView.cpp">
-      <Filter>View</Filter>
+      <Filter>View\CanvasView</Filter>
+    </ClCompile>
+    <ClCompile Include="ShapeView.cpp">
+      <Filter>View\ShapeView</Filter>
     </ClCompile>
     <ClCompile Include="SelectionFrame.cpp">
-      <Filter>View</Filter>
+      <Filter>View\SelectionFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Paint2View.cpp">
+      <Filter>View\Paint2View</Filter>
+    </ClCompile>
+    <ClCompile Include="Paint2Doc.cpp">
+      <Filter>AppModel\Paint2Doc</Filter>
     </ClCompile>
     <ClCompile Include="XmlReader.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>AppModel\Xml</Filter>
+    </ClCompile>
+    <ClCompile Include="XmlWriter.cpp">
+      <Filter>AppModel\Xml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Paint\History.cpp">
+      <Filter>AppModel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

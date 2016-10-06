@@ -10,10 +10,12 @@ CDoc::CDoc(ICanvas & canvas)
 
 void CDoc::NewDocument()
 {
-	while (m_history.CanUndo())
+	size_t shapeCount = m_canvas.GetShapeCount();
+	for (int i = shapeCount - 1; i >= 0; --i)
 	{
-		m_history.Undo();
+		m_canvas.DeleteShape(m_canvas.GetShapeAtIndex(i));
 	}
+	
 	m_history.Reset();
 }
 

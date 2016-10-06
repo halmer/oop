@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "XmlReader.h"
 #include "PaintDoc.h"
+#include "pugixml.hpp"
 
 CXmlReader::CXmlReader(CPaintDoc * pDoc)
 	: m_pDoc(pDoc)

@@ -44,5 +44,5 @@
 #include <boost/range/algorithm/find_if.hpp>
 #include <vector>
 #include <map>
-#include "../Paint/pugixml.hpp"
+#include <sstream>
 #include <iostream>

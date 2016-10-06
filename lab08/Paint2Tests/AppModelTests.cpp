@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "../Paint2/EditableShape.h"
 #include "../Paint2/EditableCanvas.h"
-#include "../Paint2/Selection.h"
 #include "../Paint2/Canvas.h"
 #include "../Paint/History.h"
 #include "../Paint2/Doc.h"

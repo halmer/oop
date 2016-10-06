@@ -1,10 +1,11 @@
 #include "stdafx.h"
 #include "XmlWriter.h"
-#include "PaintDoc.h"
-#include "pugixml.hpp"
+#include "ICanvas.h"
+#include "IShape.h"
+#include "../Paint/pugixml.hpp"
 
-CXmlWriter::CXmlWriter(CPaintDoc * pDoc)
-	: m_pDoc(pDoc)
+CXmlWriter::CXmlWriter(ICanvas & canvas)
+	: m_canvas(canvas)
 {
 }
 
@@ -12,12 +13,10 @@ void CXmlWriter::WriteData(CArchive & ar)
 {
 	pugi::xml_document doc;
 	pugi::xml_node node = doc.append_child("Shapes");
-	auto & shapes = m_pDoc->GetShapesData();
 
-	for (auto const & shape : shapes)
+	for (size_t i = 0; i < m_canvas.GetShapeCount(); ++i)
 	{
-		CRect rect = shape->GetFrameRect();
-		rect.NormalizeRect();
+		auto shape = m_canvas.GetShapeAtIndex(i);
 		pugi::xml_node param = node.append_child("Shape");
 
 		switch (shape->GetType())
@@ -32,6 +31,9 @@ void CXmlWriter::WriteData(CArchive & ar)
 			param.append_attribute("type") = "Ellipse";
 			break;
 		}
+
+		auto rect = shape->GetRect();
+		rect.NormalizeRect();
 		param.append_attribute("left") = rect.left;
 		param.append_attribute("top") = rect.top;
 		param.append_attribute("right") = rect.right;
@@ -40,5 +42,5 @@ void CXmlWriter::WriteData(CArchive & ar)
 
 	std::stringstream strm;
 	doc.save(strm);
-	ar.Write(strm.str().data(), boost::numeric_cast<UINT>(strm.str().size()));
+	ar.Write(strm.str().data(), strm.str().size());
 }

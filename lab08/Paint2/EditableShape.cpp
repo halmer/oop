@@ -13,11 +13,6 @@ CEditableShape::CEditableShape(std::shared_ptr<IShape> const & shape, CHistory &
 	});
 }
 
-CEditableShape::~CEditableShape()
-{
-	std::cout << "CEditableShape::~CEditableShape()\n";
-}
-
 void CEditableShape::SetRect(CRect const & rect)
 {
 	if (m_rect != rect)

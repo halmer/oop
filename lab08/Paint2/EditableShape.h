@@ -8,7 +8,6 @@ class CEditableShape : public IEditableShape
 {
 public:
 	CEditableShape(std::shared_ptr<IShape> const & shape, CHistory & history);
-	~CEditableShape();
 	void SetRect(CRect const & rect) override;
 	void Offset(CPoint const & delta, OffsetType type) override;
 	CRect GetRect() const override;
