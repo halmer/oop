@@ -5,6 +5,8 @@
 
 #include "Paint2Doc.h"
 #include "Paint2View.h"
+#include "CanvasView.h"
+#include "CanvasPresenter.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -30,9 +32,8 @@ BEGIN_MESSAGE_MAP(CPaint2View, CScrollView)
 END_MESSAGE_MAP()
 
 CPaint2View::CPaint2View()
-	: m_presenter(theApp.m_doc, m_canvasView)
+	: m_canvasView(std::make_shared<CCanvasView>())
 {
-	m_presenter.InitView(this);
 }
 
 CPaint2View::~CPaint2View()
@@ -41,9 +42,20 @@ CPaint2View::~CPaint2View()
 
 void CPaint2View::OnInitialUpdate()
 {
-	CScrollView::OnInitialUpdate();
+	CPaint2Doc * pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+	{
+		return;
+	}
 
+	CScrollView::OnInitialUpdate();
 	SetScrollSizes(MM_TEXT, CSize(100, 100));
+	
+	if (!m_presenter)
+	{
+		pDoc->InitView(this);
+	}
 }
 
 BOOL CPaint2View::PreCreateWindow(CREATESTRUCT& cs)
@@ -66,12 +78,37 @@ void CPaint2View::OnDraw(CDC * pDC)
 	CBitmap * oldBmp = dcMem.SelectObject(&bmpMem);
 	dcMem.FillSolidRect(clientRect, RGB(255, 255, 255));
 
-	m_canvasView.Draw(dcMem);
+	m_canvasView->Draw(dcMem);
 
 	pDC->BitBlt(clientRect.left, clientRect.top, clientRect.Width(), clientRect.Height(),
 				&dcMem, clientRect.left, clientRect.top, SRCCOPY);
 
 	dcMem.SelectObject(oldBmp);
+}
+
+void CPaint2View::Initialize()
+{
+	CPaint2Doc * pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+	{
+		return;
+	}
+
+	m_canvasView = std::make_shared<CCanvasView>();
+	m_presenter = std::make_unique<CCanvasPresenter>(pDoc->GetDoc(), m_canvasView);
+	m_presenter->InitView(this);
+}
+
+void CPaint2View::Update(UpdateType type)
+{
+	if (type == UpdateType::RedrawUpdateScroll)
+	{
+		auto size = m_canvasView->GetSize();
+		SetScrollSizes(MM_TEXT, CSize(size.BottomRight()));
+	}
+
+	Invalidate();
 }
 
 void CPaint2View::OnRButtonUp(UINT /* nFlags */, CPoint point)
@@ -87,42 +124,29 @@ void CPaint2View::OnContextMenu(CWnd* /* pWnd */, CPoint point)
 #endif
 }
 
-void CPaint2View::SetScroll()
-{
-	auto size = m_canvasView.GetSize();
-
-	SetScrollSizes(MM_TEXT, CSize(size.BottomRight()));
-	Invalidate();
-}
-
 void CPaint2View::OnCreateRectangle()
 {
-	m_presenter.OnCreateRectangle();
-	SetScroll();
+	m_presenter->OnCreateRectangle();
 }
 
 void CPaint2View::OnCreateTriangle()
 {
-	m_presenter.OnCreateTriangle();
-	SetScroll();
+	m_presenter->OnCreateTriangle();
 }
 
 void CPaint2View::OnCreateEllipse()
 {
-	m_presenter.OnCreateEllipse();
-	SetScroll();
+	m_presenter->OnCreateEllipse();
 }
 
 void CPaint2View::OnUndo()
 {
-	m_presenter.OnUndo();
-	SetScroll();
+	m_presenter->OnUndo();
 }
 
 void CPaint2View::OnRedo()
 {
-	m_presenter.OnRedo();
-	SetScroll();
+	m_presenter->OnRedo();
 }
 
 void CPaint2View::OnLButtonDown(UINT nFlags, CPoint point)
@@ -130,8 +154,8 @@ void CPaint2View::OnLButtonDown(UINT nFlags, CPoint point)
 	SetCapture();
 
 	point.Offset(GetDeviceScrollPosition());
-	m_canvasView.HandleMouseDown(point);
-	SetScroll();
+	m_canvasView->HandleMouseDown(point);
+	Invalidate();
 
 	CScrollView::OnLButtonDown(nFlags, point);
 }
@@ -141,9 +165,7 @@ void CPaint2View::OnLButtonUp(UINT nFlags, CPoint point)
 	ReleaseCapture();
 	
 	point.Offset(GetDeviceScrollPosition());
-	m_canvasView.HandleMouseUp(point);
-
-	SetScroll();
+	m_canvasView->HandleMouseUp(point);
 
 	CScrollView::OnLButtonUp(nFlags, point);
 }
@@ -153,17 +175,14 @@ void CPaint2View::OnMouseMove(UINT nFlags, CPoint point)
 	SetClassLong(GetSafeHwnd(), GCL_HCURSOR, NULL);
 	
 	point.Offset(GetDeviceScrollPosition());
-	m_canvasView.HandleMouseMove(nFlags, point);
-
-	Invalidate();
+	m_canvasView->HandleMouseMove(nFlags, point);
 
 	CScrollView::OnMouseMove(nFlags, point);
 }
 
 void CPaint2View::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	m_canvasView.HandleOnKeyDown(nChar);
-	SetScroll();
+	m_canvasView->HandleOnKeyDown(nChar);
 
 	CScrollView::OnKeyDown(nChar, nRepCnt, nFlags);
 }
@@ -175,12 +194,12 @@ BOOL CPaint2View::OnEraseBkgnd(CDC* /*pDC*/)
 
 void CPaint2View::OnUpdateUndo(CCmdUI * pCmdUI)
 {
-	m_presenter.OnUpdateUndo(pCmdUI);
+	m_presenter->OnUpdateUndo(pCmdUI);
 }
 
 void CPaint2View::OnUpdateRedo(CCmdUI * pCmdUI)
 {
-	m_presenter.OnUpdateRedo(pCmdUI);
+	m_presenter->OnUpdateRedo(pCmdUI);
 }
 
 CPoint CPaint2View::GetPointInViewCenter() const

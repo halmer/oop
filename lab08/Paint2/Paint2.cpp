@@ -17,7 +17,6 @@ BEGIN_MESSAGE_MAP(CPaint2App, CWinAppEx)
 END_MESSAGE_MAP()
 
 CPaint2App::CPaint2App()
-	: m_doc(m_canvas)
 {
 	SetAppID(_T("Paint2.AppID.NoVersion"));
 }

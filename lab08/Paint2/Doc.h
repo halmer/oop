@@ -1,15 +1,17 @@
 #pragma once
 #include "IDocument.h"
-#include "ICanvas.h"
+#include "History.h"
 #include "EditableCanvas.h"
-#include "../Paint/History.h"
+
+class ICanvas;
 
 class CDoc : public ::IDocument
 {
 public:
-	CDoc(ICanvas & canvas);
-	void NewDocument() override;
-	IEditableCanvas & GetCanvas() override;
+	CDoc(std::unique_ptr<ICanvas> && canvas);
+	void Save(std::function<void(ICanvas const & canvas)> const & saver) override;
+	void Load(std::function<void(ICanvas & canvas)> const & loader) override;
+	IEditableCanvas & GetEditableCanvas() override;
 	void Undo() override;
 	void Redo() override;
 	bool CanUndo() const override;
@@ -17,6 +19,6 @@ public:
 
 private:
 	CHistory m_history;
-	ICanvas & m_canvas;
+	std::unique_ptr<ICanvas> m_canvas;
 	CEditableCanvas m_editableCanvas;
 };

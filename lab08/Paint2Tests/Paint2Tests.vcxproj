@@ -71,15 +71,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -182,18 +186,19 @@
     <ClInclude Include="..\Paint2\Doc.h" />
     <ClInclude Include="..\Paint2\EditableCanvas.h" />
     <ClInclude Include="..\Paint2\EditableShape.h" />
+    <ClInclude Include="..\Paint2\History.h" />
     <ClInclude Include="..\Paint2\ICanvas.h" />
     <ClInclude Include="..\Paint2\ICanvasView.h" />
     <ClInclude Include="..\Paint2\IDocument.h" />
     <ClInclude Include="..\Paint2\IEditableCanvas.h" />
     <ClInclude Include="..\Paint2\IEditableShape.h" />
+    <ClInclude Include="..\Paint2\IHistory.h" />
     <ClInclude Include="..\Paint2\ISelectionFrame.h" />
     <ClInclude Include="..\Paint2\IShape.h" />
     <ClInclude Include="..\Paint2\IShapeView.h" />
     <ClInclude Include="..\Paint2\SelectionFrame.h" />
     <ClInclude Include="..\Paint2\Shape.h" />
     <ClInclude Include="..\Paint2\ShapeView.h" />
-    <ClInclude Include="..\Paint\History.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -204,10 +209,10 @@
     <ClCompile Include="..\Paint2\Doc.cpp" />
     <ClCompile Include="..\Paint2\EditableCanvas.cpp" />
     <ClCompile Include="..\Paint2\EditableShape.cpp" />
+    <ClCompile Include="..\Paint2\History.cpp" />
     <ClCompile Include="..\Paint2\SelectionFrame.cpp" />
     <ClCompile Include="..\Paint2\Shape.cpp" />
     <ClCompile Include="..\Paint2\ShapeView.cpp" />
-    <ClCompile Include="..\Paint\History.cpp" />
     <ClCompile Include="AppModelTests.cpp" />
     <ClCompile Include="DomainModelTests.cpp" />
     <ClCompile Include="Paint2Tests.cpp" />

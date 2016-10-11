@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "EditableShape.h"
-#include "..\Paint\History.h"
+#include "IHistory.h"
 
-CEditableShape::CEditableShape(std::shared_ptr<IShape> const & shape, CHistory & history)
+CEditableShape::CEditableShape(std::shared_ptr<IShape> const & shape, IHistory & history)
 	: m_rect(shape->GetRect())
 	, m_shape(shape)
 	, m_history(history)

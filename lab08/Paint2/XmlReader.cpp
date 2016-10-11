@@ -1,15 +1,10 @@
 #include "stdafx.h"
 #include "XmlReader.h"
-#include "ICanvas.h"
+#include "Canvas.h"
 #include "Shape.h"
 #include "../Paint/pugixml.hpp"
 
-CXmlReader::CXmlReader(ICanvas & canvas)
-	: m_canvas(canvas)
-{
-}
-
-void CXmlReader::ReadData(CArchive & ar)
+void CXmlReader::LoadCanvas(ICanvas & canvas, CArchive & ar)
 {
 	CFile * file = ar.GetFile();
 	pugi::xml_document doc;
@@ -41,19 +36,19 @@ void CXmlReader::ReadData(CArchive & ar)
 		{
 			if (type == "Rectangle")
 			{
-				m_canvas.InsertShape(
+				canvas.InsertShape(
 					std::make_shared<CShape>(CRect(left, top, right, bottom), ShapeType::Rectangle), boost::none
 				);
 			}
 			else if (type == "Triangle")
 			{
-				m_canvas.InsertShape(
+				canvas.InsertShape(
 					std::make_shared<CShape>(CRect(left, top, right, bottom), ShapeType::Triangle), boost::none
 				);
 			}
 			else if (type == "Ellipse")
 			{
-				m_canvas.InsertShape(
+				canvas.InsertShape(
 					std::make_shared<CShape>(CRect(left, top, right, bottom), ShapeType::Ellipse), boost::none
 				);
 			}

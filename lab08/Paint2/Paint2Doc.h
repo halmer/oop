@@ -1,13 +1,16 @@
 #pragma once
-#include "XmlReader.h"
-#include "XmlWriter.h"
+
+class IDocument;
+class IPaint2View;
 
 class CPaint2Doc : public CDocument
 {
 public:
 	virtual ~CPaint2Doc();
 	virtual BOOL OnNewDocument();
-	virtual void Serialize(CArchive& ar);
+	virtual void Serialize(CArchive & ar);
+	std::shared_ptr<::IDocument> GetDoc();
+	void InitView(IPaint2View * view);
 
 protected:
 	CPaint2Doc();
@@ -18,8 +21,10 @@ protected:
 #endif
 
 private:
-	CXmlReader m_reader;
-	CXmlWriter m_writer;
+	void NewDocument();
+	
+	std::shared_ptr<::IDocument> m_doc;
+	IPaint2View * m_view;
 
 public:
 #ifdef _DEBUG

@@ -1,18 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="DomainModel">
       <UniqueIdentifier>{4935bf08-ea14-4d5f-89c1-6f9750dd6103}</UniqueIdentifier>
     </Filter>
@@ -58,28 +46,46 @@
     <Filter Include="AppModel\Xml">
       <UniqueIdentifier>{231775f9-60f3-4952-924d-be85132a4eb3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AppModel\History">
+      <UniqueIdentifier>{8792d913-b27e-43ff-bbd7-e929b0af4b56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Zero">
+      <UniqueIdentifier>{ef60943e-10cb-43c3-8ca4-00b8049687e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Zero\Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Zero\Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Zero\Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Paint2.h">
-      <Filter>Header Files</Filter>
+      <Filter>Zero\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
+      <Filter>Zero\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
+      <Filter>Zero\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MainFrm.h">
-      <Filter>Header Files</Filter>
+      <Filter>Zero\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
-      <Filter>Header Files</Filter>
+      <Filter>Zero\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CanvasPresenter.h">
       <Filter>Presenter</Filter>
     </ClInclude>
     <ClInclude Include="signals.h">
-      <Filter>Header Files</Filter>
+      <Filter>Zero\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EditableCanvas.h">
       <Filter>AppModel\EditableCanvas</Filter>
@@ -147,25 +153,28 @@
     <ClInclude Include="XmlWriter.h">
       <Filter>AppModel\Xml</Filter>
     </ClInclude>
-    <ClInclude Include="..\Paint\History.h">
-      <Filter>AppModel</Filter>
+    <ClInclude Include="History.h">
+      <Filter>AppModel\History</Filter>
+    </ClInclude>
+    <ClInclude Include="IHistory.h">
+      <Filter>AppModel\History</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Paint2.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Zero\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Zero\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MainFrm.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Zero\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CanvasPresenter.cpp">
       <Filter>Presenter</Filter>
     </ClCompile>
     <ClCompile Include="..\Paint\pugixml.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Zero\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EditableCanvas.cpp">
       <Filter>AppModel\EditableCanvas</Filter>
@@ -203,59 +212,59 @@
     <ClCompile Include="XmlWriter.cpp">
       <Filter>AppModel\Xml</Filter>
     </ClCompile>
-    <ClCompile Include="..\Paint\History.cpp">
-      <Filter>AppModel</Filter>
+    <ClCompile Include="History.cpp">
+      <Filter>AppModel\History</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Paint2.rc">
-      <Filter>Resource Files</Filter>
+      <Filter>Zero\Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\buttons.bmp">
-      <Filter>Resource Files</Filter>
+      <Filter>Zero\Resource Files</Filter>
     </Image>
     <Image Include="res\filelarge.bmp">
-      <Filter>Resource Files</Filter>
+      <Filter>Zero\Resource Files</Filter>
     </Image>
     <Image Include="res\filesmall.bmp">
-      <Filter>Resource Files</Filter>
+      <Filter>Zero\Resource Files</Filter>
     </Image>
     <Image Include="res\main.bmp">
-      <Filter>Resource Files</Filter>
+      <Filter>Zero\Resource Files</Filter>
     </Image>
     <Image Include="res\writelarge.bmp">
-      <Filter>Resource Files</Filter>
+      <Filter>Zero\Resource Files</Filter>
     </Image>
     <Image Include="res\writesmall.bmp">
-      <Filter>Resource Files</Filter>
+      <Filter>Zero\Resource Files</Filter>
     </Image>
     <Image Include="res\Paint2Doc.ico">
-      <Filter>Resource Files</Filter>
+      <Filter>Zero\Resource Files</Filter>
     </Image>
     <Image Include="res\Paint2.ico">
-      <Filter>Resource Files</Filter>
+      <Filter>Zero\Resource Files</Filter>
     </Image>
     <Image Include="res\Toolbar.bmp">
-      <Filter>Resource Files</Filter>
+      <Filter>Zero\Resource Files</Filter>
     </Image>
     <Image Include="res\Toolbar256.bmp">
-      <Filter>Resource Files</Filter>
+      <Filter>Zero\Resource Files</Filter>
     </Image>
     <Image Include="res\paintlarge.bmp">
-      <Filter>Resource Files</Filter>
+      <Filter>Zero\Resource Files</Filter>
     </Image>
     <Image Include="res\paintsmall.bmp">
-      <Filter>Resource Files</Filter>
+      <Filter>Zero\Resource Files</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\ribbon.mfcribbon-ms">
-      <Filter>Resource Files</Filter>
+      <Filter>Zero\Resource Files</Filter>
     </None>
     <None Include="res\Paint2.rc2">
-      <Filter>Resource Files</Filter>
+      <Filter>Zero\Resource Files</Filter>
     </None>
   </ItemGroup>
 </Project>

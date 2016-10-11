@@ -1,9 +1,11 @@
 #include "stdafx.h"
-#include "EditableShape.h"
 #include "EditableCanvas.h"
+#include "ICanvas.h"
+#include "IHistory.h"
 #include "Shape.h"
+#include "EditableShape.h"
 
-CEditableCanvas::CEditableCanvas(ICanvas & canvas, CHistory & history)
+CEditableCanvas::CEditableCanvas(ICanvas & canvas, IHistory & history)
 	: m_canvas(canvas)
 	, m_history(history)
 {

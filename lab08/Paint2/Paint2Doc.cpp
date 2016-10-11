@@ -6,6 +6,11 @@
 
 #include "Paint2Doc.h"
 #include <propkey.h>
+#include "Canvas.h"
+#include "Doc.h"
+#include "IPaint2View.h"
+#include "XmlReader.h"
+#include "XmlWriter.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -17,19 +22,8 @@ BEGIN_MESSAGE_MAP(CPaint2Doc, CDocument)
 END_MESSAGE_MAP()
 
 CPaint2Doc::CPaint2Doc()
-	: m_reader(theApp.m_canvas)
-	, m_writer(theApp.m_canvas)
+	: m_view(nullptr)
 {
-	auto & editableCanvas = theApp.m_doc.GetCanvas();
-	editableCanvas.DoOnInsertShape([this](std::shared_ptr<IEditableShape> const & /*shape*/, boost::optional<size_t> /*position*/) {
-		SetModifiedFlag();
-	});
-	editableCanvas.DoOnDeleteShape([this](std::shared_ptr<IEditableShape> const & /*shape*/) {
-		SetModifiedFlag();
-	});
-	editableCanvas.DoOnChangeShape([this](std::shared_ptr<IEditableShape> const & /*shape*/) {
-		SetModifiedFlag();
-	});
 }
 
 CPaint2Doc::~CPaint2Doc()
@@ -41,21 +35,60 @@ BOOL CPaint2Doc::OnNewDocument()
 	if (!CDocument::OnNewDocument())
 		return FALSE;
 	
-	theApp.m_doc.NewDocument();
+	NewDocument();
 
 	return TRUE;
 }
 
-void CPaint2Doc::Serialize(CArchive& ar)
+void CPaint2Doc::Serialize(CArchive & ar)
 {
 	if (ar.IsStoring())
 	{
-		m_writer.WriteData(ar);
+		m_doc->Save([&ar](ICanvas const & canvas) {
+			CXmlWriter writer;
+			writer.SaveCanvas(canvas, ar);
+		});
 	}
 	else
 	{
-		theApp.m_doc.NewDocument();
-		m_reader.ReadData(ar);
+		NewDocument();
+
+		m_doc->Load([&ar](ICanvas & canvas) {
+			CXmlReader reader;
+			reader.LoadCanvas(canvas, ar);
+		});
+	}
+}
+
+std::shared_ptr<::IDocument> CPaint2Doc::GetDoc()
+{
+	return m_doc;
+}
+
+void CPaint2Doc::InitView(IPaint2View * view)
+{
+	m_view = view;
+	m_view->Initialize();
+}
+
+void CPaint2Doc::NewDocument()
+{
+	m_doc = std::make_shared<CDoc>(std::make_unique<CCanvas>());
+	auto & editableCanvas = m_doc->GetEditableCanvas();
+
+	editableCanvas.DoOnInsertShape([this](std::shared_ptr<IEditableShape> const & /*shape*/, boost::optional<size_t> /*position*/) {
+		SetModifiedFlag();
+	});
+	editableCanvas.DoOnDeleteShape([this](std::shared_ptr<IEditableShape> const & /*shape*/) {
+		SetModifiedFlag();
+	});
+	editableCanvas.DoOnChangeShape([this](std::shared_ptr<IEditableShape> const & /*shape*/) {
+		SetModifiedFlag();
+	});
+
+	if (m_view)
+	{
+		m_view->Initialize();
 	}
 }
 

@@ -4,19 +4,14 @@
 #include "IShape.h"
 #include "../Paint/pugixml.hpp"
 
-CXmlWriter::CXmlWriter(ICanvas & canvas)
-	: m_canvas(canvas)
-{
-}
-
-void CXmlWriter::WriteData(CArchive & ar)
+void CXmlWriter::SaveCanvas(ICanvas const & canvas, CArchive & ar)
 {
 	pugi::xml_document doc;
 	pugi::xml_node node = doc.append_child("Shapes");
 
-	for (size_t i = 0; i < m_canvas.GetShapeCount(); ++i)
+	for (size_t i = 0; i < canvas.GetShapeCount(); ++i)
 	{
-		auto shape = m_canvas.GetShapeAtIndex(i);
+		auto shape = canvas.GetShapeAtIndex(i);
 		pugi::xml_node param = node.append_child("Shape");
 
 		switch (shape->GetType())

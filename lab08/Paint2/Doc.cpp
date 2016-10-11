@@ -1,25 +1,24 @@
 #include "stdafx.h"
 #include "Doc.h"
-#include "EditableCanvas.h"
+#include "ICanvas.h"
 
-CDoc::CDoc(ICanvas & canvas)
-	: m_canvas(canvas)
-	, m_editableCanvas(m_canvas, m_history)
+CDoc::CDoc(std::unique_ptr<ICanvas> && canvas)
+	: m_canvas(move(canvas))
+	, m_editableCanvas(*m_canvas, m_history)
 {
 }
 
-void CDoc::NewDocument()
+void CDoc::Save(std::function<void(ICanvas const & canvas)> const & saver)
 {
-	size_t shapeCount = m_canvas.GetShapeCount();
-	for (int i = shapeCount - 1; i >= 0; --i)
-	{
-		m_canvas.DeleteShape(m_canvas.GetShapeAtIndex(i));
-	}
-	
-	m_history.Reset();
+	saver(*m_canvas);
 }
 
-IEditableCanvas & CDoc::GetCanvas()
+void CDoc::Load(std::function<void(ICanvas & canvas)> const & loader)
+{
+	loader(*m_canvas);
+}
+
+IEditableCanvas & CDoc::GetEditableCanvas()
 {
 	return m_editableCanvas;
 }

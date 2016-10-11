@@ -2,12 +2,12 @@
 #include "IEditableShape.h"
 #include "signals.h"
 
-class CHistory;
+class IHistory;
 
 class CEditableShape : public IEditableShape
 {
 public:
-	CEditableShape(std::shared_ptr<IShape> const & shape, CHistory & history);
+	CEditableShape(std::shared_ptr<IShape> const & shape, IHistory & history);
 	void SetRect(CRect const & rect) override;
 	void Offset(CPoint const & delta, OffsetType type) override;
 	CRect GetRect() const override;
@@ -19,7 +19,7 @@ public:
 private:
 	CRect m_rect;
 	std::shared_ptr<IShape> m_shape;
-	CHistory & m_history;
+	IHistory & m_history;
 	ShapeChangeSignal m_shapeChange;
 	ScopedConnection m_connection;
 };

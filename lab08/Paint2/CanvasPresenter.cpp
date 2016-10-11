@@ -2,25 +2,25 @@
 #include "CanvasPresenter.h"
 #include "IDocument.h"
 #include "IEditableCanvas.h"
-#include "IShapeView.h"
 #include "ICanvasView.h"
+#include "IShapeView.h"
 #include "IPaint2View.h"
 
 const int WIDTH = 50;
 const int HEIGHT = 50;
 
-CCanvasPresenter::CCanvasPresenter(::IDocument & doc, ICanvasView & canvasView)
+CCanvasPresenter::CCanvasPresenter(std::shared_ptr<::IDocument> const & doc, std::shared_ptr<ICanvasView> const & canvasView)
 	: m_doc(doc)
-	, m_canvas(doc.GetCanvas())
+	, m_editableCanvas(doc->GetEditableCanvas())
 	, m_canvasView(canvasView)
 {
-	m_canvas.DoOnInsertShape(std::bind(&CCanvasPresenter::InsertShape, this, std::placeholders::_1, std::placeholders::_2));
-	m_canvas.DoOnDeleteShape(std::bind(&CCanvasPresenter::DeleteShape, this, std::placeholders::_1));
+	m_editableCanvas.DoOnInsertShape(std::bind(&CCanvasPresenter::InsertShape, this, std::placeholders::_1, std::placeholders::_2));
+	m_editableCanvas.DoOnDeleteShape(std::bind(&CCanvasPresenter::DeleteShape, this, std::placeholders::_1));
 
-	auto & frame = m_canvasView.GetSelectionFrame();
+	auto & frame = m_canvasView->GetSelectionFrame();
 	frame.DoOnControlPointDrag(std::bind(&CCanvasPresenter::OffsetShape, this, std::placeholders::_1, std::placeholders::_2));
 	frame.DoOnDragEnd([this]() {
-		auto shape = m_canvas.GetSelection();
+		auto shape = m_editableCanvas.GetSelection();
 		shape->Commit();
 	});
 }
@@ -32,39 +32,43 @@ void CCanvasPresenter::InitView(IPaint2View * view)
 
 void CCanvasPresenter::OnCreateRectangle()
 {
-	m_canvas.AddShape(ShapeType::Rectangle, GetDefaultRect());
+	m_editableCanvas.AddShape(ShapeType::Rectangle, GetDefaultRect());
 }
 
 void CCanvasPresenter::OnCreateTriangle()
 {
-	m_canvas.AddShape(ShapeType::Triangle, GetDefaultRect());
+	m_editableCanvas.AddShape(ShapeType::Triangle, GetDefaultRect());
 }
 
 void CCanvasPresenter::OnCreateEllipse()
 {
-	m_canvas.AddShape(ShapeType::Ellipse, GetDefaultRect());
+	m_editableCanvas.AddShape(ShapeType::Ellipse, GetDefaultRect());
 }
 
 void CCanvasPresenter::OnUndo()
 {
-	m_doc.Undo();
-	m_canvasView.SelectShape(nullptr);
+	m_doc->Undo();
+	m_canvasView->SelectShape(nullptr);
+
+	m_view->Update(UpdateType::RedrawUpdateScroll);
 }
 
 void CCanvasPresenter::OnRedo()
 {
-	m_doc.Redo();
-	m_canvasView.SelectShape(nullptr);
+	m_doc->Redo();
+	m_canvasView->SelectShape(nullptr);
+
+	m_view->Update(UpdateType::RedrawUpdateScroll);
 }
 
 void CCanvasPresenter::OnUpdateUndo(CCmdUI * pCmdUI)
 {
-	pCmdUI->Enable(m_doc.CanUndo());
+	pCmdUI->Enable(m_doc->CanUndo());
 }
 
 void CCanvasPresenter::OnUpdateRedo(CCmdUI * pCmdUI)
 {
-	pCmdUI->Enable(m_doc.CanRedo());
+	pCmdUI->Enable(m_doc->CanRedo());
 }
 
 void CCanvasPresenter::InsertShape(std::shared_ptr<IEditableShape> const & shape, boost::optional<size_t> pos)
@@ -73,13 +77,13 @@ void CCanvasPresenter::InsertShape(std::shared_ptr<IEditableShape> const & shape
 	switch (shape->GetType())
 	{
 	case ShapeType::Rectangle:
-		shapeView = m_canvasView.InsertShape(ShapeViewType::Rectangle, shape->GetRect(), pos);
+		shapeView = m_canvasView->InsertShape(ShapeViewType::Rectangle, shape->GetRect(), pos);
 		break;
 	case ShapeType::Triangle:
-		shapeView = m_canvasView.InsertShape(ShapeViewType::Triangle, shape->GetRect(), pos);
+		shapeView = m_canvasView->InsertShape(ShapeViewType::Triangle, shape->GetRect(), pos);
 		break;
 	case ShapeType::Ellipse:
-		shapeView = m_canvasView.InsertShape(ShapeViewType::Ellipse, shape->GetRect(), pos);
+		shapeView = m_canvasView->InsertShape(ShapeViewType::Ellipse, shape->GetRect(), pos);
 		break;
 	}
 
@@ -91,7 +95,7 @@ void CCanvasPresenter::InsertShape(std::shared_ptr<IEditableShape> const & shape
 	auto context = std::make_shared<Context>();
 
 	shapeView->DoOnMousePress([=](IShapeView & /*shape*/) {
-		m_canvas.SelectShape(shape);
+		m_editableCanvas.SelectShape(shape);
 	});
 
 	shapeView->DoOnMouseRelease([=](IShapeView & /*shape*/, bool /*releaseInside*/) {
@@ -100,6 +104,7 @@ void CCanvasPresenter::InsertShape(std::shared_ptr<IEditableShape> const & shape
 			shape->Commit();
 		}
 		context->moved = false;
+		m_view->Update(UpdateType::RedrawUpdateScroll);
 	});
 
 	shapeView->DoOnMouseDrag([=](IShapeView & /*shapeView*/, const CRect & targetRect) {
@@ -113,8 +118,8 @@ void CCanvasPresenter::InsertShape(std::shared_ptr<IEditableShape> const & shape
 	});
 
 	shapeView->DoOnDeleteShape([=](IShapeView & /*shape*/) {
-		m_canvas.SelectShape(shape);
-		m_canvas.DeleteSelection();
+		m_editableCanvas.SelectShape(shape);
+		m_editableCanvas.DeleteSelection();
 	});
 
 	std::weak_ptr<IShapeView> shapeViewWeak(shapeView);
@@ -123,6 +128,7 @@ void CCanvasPresenter::InsertShape(std::shared_ptr<IEditableShape> const & shape
 		{
 			shapeView->SetRect(shape->GetRect());
 		}
+		m_view->Update(UpdateType::Redraw);
 	});
 
 	if (pos)
@@ -138,6 +144,8 @@ void CCanvasPresenter::InsertShape(std::shared_ptr<IEditableShape> const & shape
 	{
 		m_shapes.push_back({ shape, shapeView });
 	}
+
+	m_view->Update(UpdateType::RedrawUpdateScroll);
 }
 
 void CCanvasPresenter::DeleteShape(std::shared_ptr<IEditableShape> const & shape)
@@ -149,13 +157,15 @@ void CCanvasPresenter::DeleteShape(std::shared_ptr<IEditableShape> const & shape
 		return;
 	}
 
-	m_canvasView.DeleteShape(it->shapeView);
+	m_canvasView->DeleteShape(it->shapeView);
 	m_shapes.erase(it);
+
+	m_view->Update(UpdateType::RedrawUpdateScroll);
 }
 
 void CCanvasPresenter::OffsetShape(ControlPointType type, CPoint const & delta)
 {
-	auto shape = m_canvas.GetSelection();
+	auto shape = m_editableCanvas.GetSelection();
 
 	switch (type)
 	{

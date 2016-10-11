@@ -1,7 +1,8 @@
 #pragma once
 #include "IPaint2View.h"
-#include "CanvasPresenter.h"
-#include "CanvasView.h"
+
+class CCanvasView;
+class CCanvasPresenter;
 
 class CPaint2View : public CScrollView, IPaint2View
 {
@@ -11,6 +12,10 @@ public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual void OnDraw(CDC* pDC);
 
+	void Initialize() override;
+	void Update(UpdateType type) override;
+	CPoint GetPointInViewCenter() const override;
+	
 	afx_msg void OnCreateRectangle();
 	afx_msg void OnCreateTriangle();
 	afx_msg void OnCreateEllipse();
@@ -23,8 +28,6 @@ public:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnUpdateUndo(CCmdUI * pCmdUI);
 	afx_msg void OnUpdateRedo(CCmdUI * pCmdUI);
-	
-	CPoint GetPointInViewCenter() const override;
 
 protected:
 	CPaint2View();
@@ -35,10 +38,8 @@ protected:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 
 private:
-	void SetScroll();
-
-	CCanvasView m_canvasView;
-	CCanvasPresenter m_presenter;
+	std::shared_ptr<CCanvasView> m_canvasView;
+	std::unique_ptr<CCanvasPresenter> m_presenter;
 
 public:
 #ifdef _DEBUG

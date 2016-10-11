@@ -12,7 +12,7 @@ class IPaint2View;
 class CCanvasPresenter : public ICommandSourceDelegate
 {
 public:
-	CCanvasPresenter(::IDocument & doc, ICanvasView & canvasView);
+	CCanvasPresenter(std::shared_ptr<::IDocument> const & doc, std::shared_ptr<ICanvasView> const & canvasView);
 	void InitView(IPaint2View * view);
 
 	void OnCreateRectangle() override;
@@ -35,9 +35,9 @@ private:
 		std::shared_ptr<IShapeView> shapeView;
 	};
 
-	::IDocument & m_doc;
-	IEditableCanvas & m_canvas;
-	ICanvasView & m_canvasView;
+	std::shared_ptr<::IDocument> m_doc;
+	IEditableCanvas & m_editableCanvas;
+	std::shared_ptr<ICanvasView> m_canvasView;
 	IPaint2View * m_view;
 	std::vector<Data> m_shapes;
 };

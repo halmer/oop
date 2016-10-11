@@ -1,12 +1,13 @@
 #pragma once
 #include "IEditableCanvas.h"
-#include "ICanvas.h"
-#include "../Paint/History.h"
+
+class ICanvas;
+class IHistory;
 
 class CEditableCanvas : public IEditableCanvas
 {
 public:
-	CEditableCanvas(ICanvas & canvas, CHistory & history);
+	CEditableCanvas(ICanvas & canvas, IHistory & history);
 	void AddShape(ShapeType type, CRect const & rect) override;
 	void SelectShape(std::shared_ptr<IEditableShape> const & shape) override;
 	void DeleteSelection() override;
@@ -30,7 +31,7 @@ private:
 	};
 	
 	ICanvas & m_canvas;
-	CHistory & m_history;
+	IHistory & m_history;
 	std::vector<Data> m_shapes;
 	std::shared_ptr<IEditableShape> m_selectedShape;
 	InsertShapeSignal m_insertShape;
