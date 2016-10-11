@@ -2,20 +2,30 @@
 #include "IPaint2View.h"
 
 class CCanvasView;
-class CCanvasPresenter;
+class ICommandSourceDelegate;
 
-class CPaint2View : public CScrollView, IPaint2View
+class CPaint2View : 
+	public CScrollView, 
+	IPaint2View, 
+	ICanvasViewOwner
 {
 public:
 	virtual ~CPaint2View();
 	CPaint2Doc* GetDocument() const;
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-	virtual void OnDraw(CDC* pDC);
 
+private:
+	void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
+	BOOL PreCreateWindow(CREATESTRUCT& cs) override;
+	void OnDraw(CDC* pDC) override;
+
+	// IPaint2View methods
 	void Initialize() override;
+
+	// ICanvasViewOwner methods
 	void Update(UpdateType type) override;
 	CPoint GetPointInViewCenter() const override;
-	
+	std::shared_ptr<ICanvasView> GetCanvasView() const override;
+
 	afx_msg void OnCreateRectangle();
 	afx_msg void OnCreateTriangle();
 	afx_msg void OnCreateEllipse();
@@ -39,7 +49,7 @@ protected:
 
 private:
 	std::shared_ptr<CCanvasView> m_canvasView;
-	std::unique_ptr<CCanvasPresenter> m_presenter;
+	std::unique_ptr<ICommandSourceDelegate> m_delegate;
 
 public:
 #ifdef _DEBUG

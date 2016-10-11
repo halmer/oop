@@ -10,7 +10,9 @@ public:
 	virtual BOOL OnNewDocument();
 	virtual void Serialize(CArchive & ar);
 	std::shared_ptr<::IDocument> GetDoc();
+/*
 	void InitView(IPaint2View * view);
+*/
 
 protected:
 	CPaint2Doc();
@@ -24,7 +26,9 @@ private:
 	void NewDocument();
 	
 	std::shared_ptr<::IDocument> m_doc;
+/*
 	IPaint2View * m_view;
+*/
 
 public:
 #ifdef _DEBUG

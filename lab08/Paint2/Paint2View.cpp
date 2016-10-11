@@ -52,10 +52,14 @@ void CPaint2View::OnInitialUpdate()
 	CScrollView::OnInitialUpdate();
 	SetScrollSizes(MM_TEXT, CSize(100, 100));
 	
-	if (!m_presenter)
+	Initialize();
+
+/*
+	if (!m_delegate)
 	{
 		pDoc->InitView(this);
 	}
+*/
 }
 
 BOOL CPaint2View::PreCreateWindow(CREATESTRUCT& cs)
@@ -96,8 +100,7 @@ void CPaint2View::Initialize()
 	}
 
 	m_canvasView = std::make_shared<CCanvasView>();
-	m_presenter = std::make_unique<CCanvasPresenter>(pDoc->GetDoc(), m_canvasView);
-	m_presenter->InitView(this);
+	m_delegate = std::make_unique<CCanvasPresenter>(pDoc->GetDoc(), static_cast<ICanvasViewOwner&>(*this));
 }
 
 void CPaint2View::Update(UpdateType type)
@@ -124,29 +127,34 @@ void CPaint2View::OnContextMenu(CWnd* /* pWnd */, CPoint point)
 #endif
 }
 
+void CPaint2View::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
+{
+	CScrollView::OnUpdate(pSender, lHint, pHint);
+}
+
 void CPaint2View::OnCreateRectangle()
 {
-	m_presenter->OnCreateRectangle();
+	m_delegate->OnCreateRectangle();
 }
 
 void CPaint2View::OnCreateTriangle()
 {
-	m_presenter->OnCreateTriangle();
+	m_delegate->OnCreateTriangle();
 }
 
 void CPaint2View::OnCreateEllipse()
 {
-	m_presenter->OnCreateEllipse();
+	m_delegate->OnCreateEllipse();
 }
 
 void CPaint2View::OnUndo()
 {
-	m_presenter->OnUndo();
+	m_delegate->OnUndo();
 }
 
 void CPaint2View::OnRedo()
 {
-	m_presenter->OnRedo();
+	m_delegate->OnRedo();
 }
 
 void CPaint2View::OnLButtonDown(UINT nFlags, CPoint point)
@@ -194,12 +202,17 @@ BOOL CPaint2View::OnEraseBkgnd(CDC* /*pDC*/)
 
 void CPaint2View::OnUpdateUndo(CCmdUI * pCmdUI)
 {
-	m_presenter->OnUpdateUndo(pCmdUI);
+	m_delegate->OnUpdateUndo(pCmdUI);
 }
 
 void CPaint2View::OnUpdateRedo(CCmdUI * pCmdUI)
 {
-	m_presenter->OnUpdateRedo(pCmdUI);
+	m_delegate->OnUpdateRedo(pCmdUI);
+}
+
+std::shared_ptr<ICanvasView> CPaint2View::GetCanvasView() const
+{
+	return m_canvasView;
 }
 
 CPoint CPaint2View::GetPointInViewCenter() const

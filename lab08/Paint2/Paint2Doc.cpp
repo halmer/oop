@@ -22,7 +22,9 @@ BEGIN_MESSAGE_MAP(CPaint2Doc, CDocument)
 END_MESSAGE_MAP()
 
 CPaint2Doc::CPaint2Doc()
+/*
 	: m_view(nullptr)
+*/
 {
 }
 
@@ -65,11 +67,13 @@ std::shared_ptr<::IDocument> CPaint2Doc::GetDoc()
 	return m_doc;
 }
 
+/*
 void CPaint2Doc::InitView(IPaint2View * view)
 {
 	m_view = view;
 	m_view->Initialize();
 }
+*/
 
 void CPaint2Doc::NewDocument()
 {
@@ -86,10 +90,12 @@ void CPaint2Doc::NewDocument()
 		SetModifiedFlag();
 	});
 
-	if (m_view)
-	{
-		m_view->Initialize();
-	}
+// /*
+// 	if (m_view)
+// 	{
+// 		m_view->Initialize();
+// 	}
+// */
 }
 
 #ifdef SHARED_HANDLERS

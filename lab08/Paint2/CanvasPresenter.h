@@ -7,14 +7,13 @@ class IEditableCanvas;
 class ICanvasView;
 class IEditableShape;
 class IShapeView;
-class IPaint2View;
+class ICanvasViewOwner;
 
 class CCanvasPresenter : public ICommandSourceDelegate
 {
 public:
-	CCanvasPresenter(std::shared_ptr<::IDocument> const & doc, std::shared_ptr<ICanvasView> const & canvasView);
-	void InitView(IPaint2View * view);
-
+	CCanvasPresenter(std::shared_ptr<::IDocument> const & doc, ICanvasViewOwner & viewOwner);
+private:
 	void OnCreateRectangle() override;
 	void OnCreateTriangle() override;
 	void OnCreateEllipse() override;
@@ -38,6 +37,6 @@ private:
 	std::shared_ptr<::IDocument> m_doc;
 	IEditableCanvas & m_editableCanvas;
 	std::shared_ptr<ICanvasView> m_canvasView;
-	IPaint2View * m_view;
+	ICanvasViewOwner & m_viewOwner;
 	std::vector<Data> m_shapes;
 };
