@@ -53,13 +53,6 @@ void CPaint2View::OnInitialUpdate()
 	SetScrollSizes(MM_TEXT, CSize(100, 100));
 	
 	Initialize();
-
-/*
-	if (!m_delegate)
-	{
-		pDoc->InitView(this);
-	}
-*/
 }
 
 BOOL CPaint2View::PreCreateWindow(CREATESTRUCT& cs)

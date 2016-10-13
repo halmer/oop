@@ -22,9 +22,6 @@ BEGIN_MESSAGE_MAP(CPaint2Doc, CDocument)
 END_MESSAGE_MAP()
 
 CPaint2Doc::CPaint2Doc()
-/*
-	: m_view(nullptr)
-*/
 {
 }
 
@@ -37,7 +34,16 @@ BOOL CPaint2Doc::OnNewDocument()
 	if (!CDocument::OnNewDocument())
 		return FALSE;
 	
-	NewDocument();
+	m_doc = std::make_shared<CDoc>(std::make_unique<CCanvas>());
+	SubscribeSignals();
+
+	return TRUE;
+}
+
+BOOL CPaint2Doc::OnOpenDocument(LPCTSTR lpszPathName)
+{
+	if (!CDocument::OnOpenDocument(lpszPathName))
+		return FALSE;
 
 	return TRUE;
 }
@@ -46,19 +52,15 @@ void CPaint2Doc::Serialize(CArchive & ar)
 {
 	if (ar.IsStoring())
 	{
-		m_doc->Save([&ar](ICanvas const & canvas) {
-			CXmlWriter writer;
-			writer.SaveCanvas(canvas, ar);
-		});
+		CXmlWriter writer;
+		writer.SaveCanvas(m_doc->GetCanvas(), ar);
 	}
 	else
 	{
-		NewDocument();
-
-		m_doc->Load([&ar](ICanvas & canvas) {
-			CXmlReader reader;
-			reader.LoadCanvas(canvas, ar);
-		});
+		CXmlReader reader;	
+		m_doc = std::make_shared<CDoc>(reader.LoadCanvas(ar));
+		
+		SubscribeSignals();
 	}
 }
 
@@ -67,17 +69,8 @@ std::shared_ptr<::IDocument> CPaint2Doc::GetDoc()
 	return m_doc;
 }
 
-/*
-void CPaint2Doc::InitView(IPaint2View * view)
+void CPaint2Doc::SubscribeSignals()
 {
-	m_view = view;
-	m_view->Initialize();
-}
-*/
-
-void CPaint2Doc::NewDocument()
-{
-	m_doc = std::make_shared<CDoc>(std::make_unique<CCanvas>());
 	auto & editableCanvas = m_doc->GetEditableCanvas();
 
 	editableCanvas.DoOnInsertShape([this](std::shared_ptr<IEditableShape> const & /*shape*/, boost::optional<size_t> /*position*/) {
@@ -89,13 +82,6 @@ void CPaint2Doc::NewDocument()
 	editableCanvas.DoOnChangeShape([this](std::shared_ptr<IEditableShape> const & /*shape*/) {
 		SetModifiedFlag();
 	});
-
-// /*
-// 	if (m_view)
-// 	{
-// 		m_view->Initialize();
-// 	}
-// */
 }
 
 #ifdef SHARED_HANDLERS
@@ -155,3 +141,4 @@ void CPaint2Doc::Dump(CDumpContext& dc) const
 	CDocument::Dump(dc);
 }
 #endif
+

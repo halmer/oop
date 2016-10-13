@@ -11,6 +11,11 @@ CEditableCanvas::CEditableCanvas(ICanvas & canvas, IHistory & history)
 {
 	m_canvas.DoOnInsertShape(std::bind(&CEditableCanvas::InsertShape, this, std::placeholders::_1, std::placeholders::_2));
 	m_canvas.DoOnDeleteShape(std::bind(&CEditableCanvas::DeleteShape, this, std::placeholders::_1));
+
+	for (size_t i = 0; i < m_canvas.GetShapeCount(); ++i)
+	{
+		InsertShape(m_canvas.GetShapeAtIndex(i), i);
+	}
 }
 
 void CEditableCanvas::AddShape(ShapeType type, CRect const & rect)

@@ -24,6 +24,11 @@ CCanvasPresenter::CCanvasPresenter(std::shared_ptr<::IDocument> const & doc, ICa
 		auto shape = m_editableCanvas.GetSelection();
 		shape->Commit();
 	});
+
+	for (size_t i = 0; i < m_editableCanvas.GetShapeCount(); ++i)
+	{
+		InsertShape(m_editableCanvas.GetShapeAtIndex(i), i);
+	}
 }
 
 void CCanvasPresenter::OnCreateRectangle()

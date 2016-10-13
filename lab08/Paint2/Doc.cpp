@@ -8,14 +8,9 @@ CDoc::CDoc(std::unique_ptr<ICanvas> && canvas)
 {
 }
 
-void CDoc::Save(std::function<void(ICanvas const & canvas)> const & saver)
+ICanvas const & CDoc::GetCanvas()
 {
-	saver(*m_canvas);
-}
-
-void CDoc::Load(std::function<void(ICanvas & canvas)> const & loader)
-{
-	loader(*m_canvas);
+	return *m_canvas;
 }
 
 IEditableCanvas & CDoc::GetEditableCanvas()

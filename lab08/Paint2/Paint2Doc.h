@@ -8,11 +8,9 @@ class CPaint2Doc : public CDocument
 public:
 	virtual ~CPaint2Doc();
 	virtual BOOL OnNewDocument();
+	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
 	virtual void Serialize(CArchive & ar);
 	std::shared_ptr<::IDocument> GetDoc();
-/*
-	void InitView(IPaint2View * view);
-*/
 
 protected:
 	CPaint2Doc();
@@ -23,12 +21,9 @@ protected:
 #endif
 
 private:
-	void NewDocument();
+	void SubscribeSignals();
 	
 	std::shared_ptr<::IDocument> m_doc;
-/*
-	IPaint2View * m_view;
-*/
 
 public:
 #ifdef _DEBUG

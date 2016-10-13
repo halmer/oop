@@ -4,19 +4,21 @@
 #include "Shape.h"
 #include "../Paint/pugixml.hpp"
 
-void CXmlReader::LoadCanvas(ICanvas & canvas, CArchive & ar)
+std::unique_ptr<ICanvas> CXmlReader::LoadCanvas(CArchive & ar)
 {
+	std::unique_ptr<ICanvas> canvas = std::make_unique<CCanvas>();
+	
 	CFile * file = ar.GetFile();
 	pugi::xml_document doc;
 	if (!doc.load_file((LPCTSTR)file->GetFilePath()))//-V2005
 	{
-		return;
+		return canvas;
 	}
 
 	pugi::xml_node shapes = doc.child("Shapes");
 	if (!shapes)
 	{
-		return;
+		return canvas;
 	}
 
 	for (auto const & shape : shapes.children("Shape"))
@@ -36,22 +38,24 @@ void CXmlReader::LoadCanvas(ICanvas & canvas, CArchive & ar)
 		{
 			if (type == "Rectangle")
 			{
-				canvas.InsertShape(
+				canvas->InsertShape(
 					std::make_shared<CShape>(CRect(left, top, right, bottom), ShapeType::Rectangle), boost::none
 				);
 			}
 			else if (type == "Triangle")
 			{
-				canvas.InsertShape(
+				canvas->InsertShape(
 					std::make_shared<CShape>(CRect(left, top, right, bottom), ShapeType::Triangle), boost::none
 				);
 			}
 			else if (type == "Ellipse")
 			{
-				canvas.InsertShape(
+				canvas->InsertShape(
 					std::make_shared<CShape>(CRect(left, top, right, bottom), ShapeType::Ellipse), boost::none
 				);
 			}
 		}
 	}
+
+	return canvas;
 }

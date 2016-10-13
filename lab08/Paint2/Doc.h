@@ -9,8 +9,7 @@ class CDoc : public ::IDocument
 {
 public:
 	CDoc(std::unique_ptr<ICanvas> && canvas);
-	void Save(std::function<void(ICanvas const & canvas)> const & saver) override;
-	void Load(std::function<void(ICanvas & canvas)> const & loader) override;
+	ICanvas const & GetCanvas() override;
 	IEditableCanvas & GetEditableCanvas() override;
 	void Undo() override;
 	void Redo() override;

@@ -28,7 +28,6 @@ void CXmlWriter::SaveCanvas(ICanvas const & canvas, CArchive & ar)
 		}
 
 		auto rect = shape->GetRect();
-		rect.NormalizeRect();
 		param.append_attribute("left") = rect.left;
 		param.append_attribute("top") = rect.top;
 		param.append_attribute("right") = rect.right;
