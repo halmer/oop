@@ -57,8 +57,13 @@ void CPaint2Doc::Serialize(CArchive & ar)
 	}
 	else
 	{
-		CXmlReader reader;	
-		m_doc = std::make_shared<CDoc>(reader.LoadCanvas(ar));
+		CXmlReader reader;
+		auto canvas = reader.LoadCanvas(ar);
+		if (!canvas)
+		{
+			AfxThrowUserException();
+		}
+		m_doc = std::make_shared<CDoc>(std::move(canvas));
 		
 		SubscribeSignals();
 	}

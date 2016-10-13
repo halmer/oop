@@ -6,21 +6,20 @@
 
 std::unique_ptr<ICanvas> CXmlReader::LoadCanvas(CArchive & ar)
 {
-	std::unique_ptr<ICanvas> canvas = std::make_unique<CCanvas>();
-	
 	CFile * file = ar.GetFile();
 	pugi::xml_document doc;
 	if (!doc.load_file((LPCTSTR)file->GetFilePath()))//-V2005
 	{
-		return canvas;
+		return nullptr;
 	}
 
 	pugi::xml_node shapes = doc.child("Shapes");
 	if (!shapes)
 	{
-		return canvas;
+		return nullptr;
 	}
 
+	std::unique_ptr<ICanvas> canvas = std::make_unique<CCanvas>();
 	for (auto const & shape : shapes.children("Shape"))
 	{
 		std::stringstream strm;
