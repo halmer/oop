@@ -8,7 +8,7 @@ class CEditableCanvas : public IEditableCanvas
 {
 public:
 	CEditableCanvas(ICanvas & canvas, IHistory & history);
-	void AddShape(ShapeType type, CRect const & rect) override;
+	void AddShape(ShapeType type, CRect const & rect, HANDLE bitmap = nullptr) override;
 	void SelectShape(std::shared_ptr<IEditableShape> const & shape) override;
 	void DeleteSelection() override;
 	std::shared_ptr<IEditableShape> GetSelection() override;

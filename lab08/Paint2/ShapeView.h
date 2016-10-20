@@ -4,7 +4,7 @@
 class CShapeView : public IShapeView
 {
 public:
-	CShapeView(CRect const & rect, ShapeViewType type);
+	CShapeView(CRect const & rect, ShapeViewType type, HANDLE bitmap = nullptr);
 	void SetRect(CRect const & rect) override;
 	CRect GetRect() const;
 	void DrawShape(CDC * pDC) override;
@@ -27,6 +27,7 @@ private:
 
 	CRect m_rect;
 	ShapeViewType m_type;
+	HANDLE m_bitmap;
 	MousePressSignal m_mousePressSignal;
 	MouseReleaseSignal m_mouseReleaseSignal;
 	MouseDragSignal m_mouseDragSignal;

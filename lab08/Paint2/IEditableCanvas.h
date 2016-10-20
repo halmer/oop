@@ -4,7 +4,7 @@
 class IEditableCanvas
 {
 public:
-	virtual void AddShape(ShapeType type, CRect const & rect) = 0;
+	virtual void AddShape(ShapeType type, CRect const & rect, HANDLE bitmap = nullptr) = 0;
 	virtual void SelectShape(std::shared_ptr<IEditableShape> const & shape) = 0;
 	virtual void DeleteSelection() = 0;
 	virtual std::shared_ptr<IEditableShape> GetSelection() = 0;

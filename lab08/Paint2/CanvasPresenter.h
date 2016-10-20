@@ -17,6 +17,7 @@ private:
 	void OnCreateRectangle() override;
 	void OnCreateTriangle() override;
 	void OnCreateEllipse() override;
+	void OnInsertImage() override;
 	void OnUndo() override;
 	void OnRedo() override;
 	void OnUpdateUndo(CCmdUI * pCmdUI) override;

@@ -17,6 +17,7 @@ public:
 	virtual void Offset(CPoint const & delta, OffsetType type) = 0;
 	virtual CRect GetRect() const = 0;
 	virtual ShapeType GetType() const = 0;
+	virtual HANDLE GetBitmap() const = 0;
 	virtual void Commit() = 0;
 
 	using ShapeChangeSignal = boost::signals2::signal<void(IEditableShape const * shape)>;

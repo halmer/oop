@@ -13,9 +13,9 @@ CCanvasView::CCanvasView()
 {
 }
 
-std::shared_ptr<IShapeView> CCanvasView::InsertShape(ShapeViewType type, CRect const & rect, boost::optional<size_t> position)
+std::shared_ptr<IShapeView> CCanvasView::InsertShape(ShapeViewType type, CRect const & rect, boost::optional<size_t> position, HANDLE bitmap /*= nullptr*/)
 {
-	auto shape = std::make_shared<CShapeView>(rect, type);
+	auto shape = std::make_shared<CShapeView>(rect, type, bitmap);
 	
 	if (position)
 	{

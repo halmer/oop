@@ -12,6 +12,7 @@ public:
 	void Offset(CPoint const & delta, OffsetType type) override;
 	CRect GetRect() const override;
 	ShapeType GetType() const override;
+	HANDLE GetBitmap() const override;
 	void Commit() override;
 
 	boost::signals2::connection DoOnShapeChange(ShapeChangeSignal::slot_type const & handler) override;

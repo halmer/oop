@@ -29,6 +29,7 @@ private:
 	afx_msg void OnCreateRectangle();
 	afx_msg void OnCreateTriangle();
 	afx_msg void OnCreateEllipse();
+	afx_msg void OnInsertImage();
 	afx_msg void OnUndo();
 	afx_msg void OnRedo();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

@@ -5,6 +5,7 @@
 #include "ICanvasView.h"
 #include "IShapeView.h"
 #include "IPaint2View.h"
+#include <afxdlgs.h>
 
 const int WIDTH = 50;
 const int HEIGHT = 50;
@@ -46,6 +47,29 @@ void CCanvasPresenter::OnCreateEllipse()
 	m_editableCanvas.AddShape(ShapeType::Ellipse, GetDefaultRect());
 }
 
+void CCanvasPresenter::OnInsertImage()
+{
+	CFileDialog fileDialog(TRUE, NULL, _T("*.bmp"));
+	if (fileDialog.DoModal() == IDOK)
+	{
+		HANDLE hBitmap = LoadImage(NULL, fileDialog.GetPathName(), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
+
+		CBitmap bitmap;
+		if (bitmap.Attach(hBitmap))
+		{
+			BITMAP bm;
+			bitmap.GetBitmap(&bm);
+
+			CRect defRect = GetDefaultRect();
+			CRect imageRect(CPoint(defRect.left, defRect.top), CSize(bm.bmWidth, bm.bmHeight));
+
+			m_editableCanvas.AddShape(ShapeType::Image, imageRect, hBitmap);
+
+			bitmap.Detach();
+		}
+	}
+}
+
 void CCanvasPresenter::OnUndo()
 {
 	m_doc->Undo();
@@ -85,6 +109,9 @@ void CCanvasPresenter::InsertShape(std::shared_ptr<IEditableShape> const & shape
 		break;
 	case ShapeType::Ellipse:
 		shapeView = m_canvasView->InsertShape(ShapeViewType::Ellipse, shape->GetRect(), pos);
+		break;
+	case ShapeType::Image:
+		shapeView = m_canvasView->InsertShape(ShapeViewType::Image, shape->GetRect(), pos, shape->GetBitmap());
 		break;
 	}
 

@@ -20,6 +20,7 @@ BEGIN_MESSAGE_MAP(CPaint2View, CScrollView)
 	ON_COMMAND(ID_BUTTON_RECTANGLE, &CPaint2View::OnCreateRectangle)
 	ON_COMMAND(ID_BUTTON_TRIANGLE, &CPaint2View::OnCreateTriangle)
 	ON_COMMAND(ID_BUTTON_ELLIPSE, &CPaint2View::OnCreateEllipse)
+	ON_COMMAND(ID_BUTTON_IMAGE, &CPaint2View::OnInsertImage)
 	ON_COMMAND(ID_BUTTON_UNDO, &CPaint2View::OnUndo)
 	ON_COMMAND(ID_BUTTON_REDO, &CPaint2View::OnRedo)
 	ON_WM_LBUTTONDOWN()
@@ -138,6 +139,11 @@ void CPaint2View::OnCreateTriangle()
 void CPaint2View::OnCreateEllipse()
 {
 	m_delegate->OnCreateEllipse();
+}
+
+void CPaint2View::OnInsertImage()
+{
+	m_delegate->OnInsertImage();
 }
 
 void CPaint2View::OnUndo()

@@ -18,9 +18,9 @@ CEditableCanvas::CEditableCanvas(ICanvas & canvas, IHistory & history)
 	}
 }
 
-void CEditableCanvas::AddShape(ShapeType type, CRect const & rect)
+void CEditableCanvas::AddShape(ShapeType type, CRect const & rect, HANDLE bitmap /*= nullptr*/)
 {
-	std::shared_ptr<IShape> shape = std::make_shared<CShape>(rect, type);
+	std::shared_ptr<IShape> shape = std::make_shared<CShape>(rect, type, bitmap);
 	
 	m_history.AddCommandAndExecute({
 		std::bind(&ICanvas::InsertShape, &m_canvas, shape, boost::none),

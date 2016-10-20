@@ -6,6 +6,7 @@ enum class ShapeViewType
 	Rectangle,
 	Triangle,
 	Ellipse,
+	Image,
 };
 
 class IShapeView

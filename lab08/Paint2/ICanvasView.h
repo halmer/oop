@@ -6,7 +6,7 @@ class ISelectionFrame;
 class ICanvasView
 {
 public:
-	virtual std::shared_ptr<IShapeView> InsertShape(ShapeViewType type, CRect const & rect, boost::optional<size_t> position) = 0;
+	virtual std::shared_ptr<IShapeView> InsertShape(ShapeViewType type, CRect const & rect, boost::optional<size_t> position, HANDLE bitmap = nullptr) = 0;
 	virtual void DeleteShape(std::shared_ptr<IShapeView> const & shape) = 0;
 	virtual void DeleteSelection() = 0;
 	virtual void SelectShape(std::shared_ptr<IShapeView> const & shape) = 0;

@@ -8,7 +8,7 @@ class CCanvasView : public ICanvasView
 {
 public:
 	CCanvasView();
-	std::shared_ptr<IShapeView> InsertShape(ShapeViewType type, CRect const & rect, boost::optional<size_t> position) override;
+	std::shared_ptr<IShapeView> InsertShape(ShapeViewType type, CRect const & rect, boost::optional<size_t> position, HANDLE bitmap = nullptr) override;
 	void DeleteShape(std::shared_ptr<IShapeView> const & shape) override;
 	void DeleteSelection() override;
 	void SelectShape(std::shared_ptr<IShapeView> const & shape) override;
