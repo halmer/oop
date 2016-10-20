@@ -25,7 +25,19 @@ void CXmlWriter::SaveCanvas(ICanvas const & canvas, CArchive & ar)
 		case ShapeType::Ellipse:
 			param.append_attribute("type") = "Ellipse";
 			break;
+		case ShapeType::Image:
+		{
+			CImage img;
+			CBitmap bmp;
+			bmp.Attach(shape->GetBitmap());
+			img.Attach(bmp);
+			img.Save(L"f:\\temp\\bmp.bmp", Gdiplus::ImageFormatBMP);
+			img.Detach();
+			bmp.Detach();
+			break;
 		}
+		}
+
 
 		auto rect = shape->GetRect();
 		param.append_attribute("left") = rect.left;
