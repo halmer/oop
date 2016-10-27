@@ -12,6 +12,8 @@ public:
 	virtual void Redo() = 0;
 	virtual bool CanUndo() const = 0;
 	virtual bool CanRedo() const = 0;
+	virtual void SaveState() = 0;
+	virtual bool IsModified() const = 0;
 
 	virtual ~IDocument() = default;
 };

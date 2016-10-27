@@ -26,6 +26,10 @@ CCanvasPresenter::CCanvasPresenter(std::shared_ptr<::IDocument> const & doc, ICa
 		shape->Commit();
 	});
 
+	m_canvasView->DoOnMousePress([this]() {
+		m_viewOwner.Update(UpdateType::Redraw);
+	});
+
 	for (size_t i = 0; i < m_editableCanvas.GetShapeCount(); ++i)
 	{
 		InsertShape(m_editableCanvas.GetShapeAtIndex(i), i);
@@ -60,8 +64,18 @@ void CCanvasPresenter::OnInsertImage()
 			BITMAP bm;
 			bitmap.GetBitmap(&bm);
 
-			CRect defRect = GetDefaultRect();
-			CRect imageRect(CPoint(defRect.left, defRect.top), CSize(bm.bmWidth, bm.bmHeight));
+			CPoint point = m_viewOwner.GetPointInViewCenter();
+			point.Offset(-bm.bmWidth / 2, -bm.bmHeight / 2);
+			if (point.x < 0)
+			{
+				point.x = 0;
+			}
+			if (point.y < 0)
+			{
+				point.y = 0;
+			}
+
+			CRect imageRect(point, CSize(bm.bmWidth, bm.bmHeight));
 
 			m_editableCanvas.AddShape(ShapeType::Image, imageRect, hBitmap);
 

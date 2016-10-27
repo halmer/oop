@@ -15,6 +15,8 @@ public:
 	void Redo() override;
 	bool CanUndo() const override;
 	bool CanRedo() const override;
+	void SaveState() override;
+	bool IsModified() const override;
 
 private:
 	CHistory m_history;

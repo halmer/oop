@@ -46,7 +46,7 @@ static map<ShapeViewType, function<void(CDC*, CRect, HANDLE)>> const drawingShap
 				auto imageHeight = rect.bottom - rect.top;
 
 				CBitmap changedBitmap;
-				changedBitmap.CreateCompatibleBitmap(pDC, imageWidth, imageHeight);
+				changedBitmap.CreateCompatibleBitmap(pDC, abs(imageWidth), abs(imageHeight));
 
 				CDC dcBitmap;
 				dcBitmap.CreateCompatibleDC(pDC);
@@ -60,10 +60,17 @@ static map<ShapeViewType, function<void(CDC*, CRect, HANDLE)>> const drawingShap
 				bitmap.GetBitmap(&bm);
 
 				dcChangedBitmap.SetStretchBltMode(STRETCH_HALFTONE);
-				dcChangedBitmap.StretchBlt(0, 0, imageWidth, imageHeight,
+
+				auto xDest = (imageWidth < 0) ? abs(imageWidth) - 1 : 0;
+				auto yDest = (imageHeight < 0) ? abs(imageHeight) - 1 : 0;
+
+				dcChangedBitmap.StretchBlt(xDest, yDest, imageWidth, imageHeight,
 										   &dcBitmap, 0, 0, bm.bmWidth, bm.bmHeight, SRCCOPY);
 
-				pDC->BitBlt(rect.left, rect.top, imageWidth, imageHeight,
+				xDest = (imageWidth < 0) ? rect.right : rect.left;
+				yDest = (imageHeight < 0) ? rect.bottom : rect.top;
+				
+				pDC->BitBlt(xDest, yDest, abs(imageWidth), abs(imageHeight),
 							&dcChangedBitmap, 0, 0, SRCCOPY);
 
 				bitmap.Detach();

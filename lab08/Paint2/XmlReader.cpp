@@ -4,11 +4,18 @@
 #include "Shape.h"
 #include "../Paint/pugixml.hpp"
 
+using namespace boost::filesystem;
+
 std::unique_ptr<ICanvas> CXmlReader::LoadCanvas(CArchive & ar)
 {
 	CFile * file = ar.GetFile();
+	path filePath(file->GetFilePath());
+
+	std::string fileName = filePath.filename().string();
+	fileName.resize(fileName.find('.'));
+
 	pugi::xml_document doc;
-	if (!doc.load_file((LPCTSTR)file->GetFilePath()))//-V2005
+	if (!doc.load_file(filePath.c_str()))
 	{
 		return nullptr;
 	}
@@ -28,10 +35,11 @@ std::unique_ptr<ICanvas> CXmlReader::LoadCanvas(CArchive & ar)
 			shape.attribute("left").value() << " " <<
 			shape.attribute("top").value() << " " <<
 			shape.attribute("right").value() << " " <<
-			shape.attribute("bottom").value();
-		std::string type;
+			shape.attribute("bottom").value() << " " <<
+			shape.attribute("bitmap").value();
+		std::string type, bitmapName;
 		int left = 0, top = 0, right = 0, bottom = 0;
-		strm >> type >> left >> top >> right >> bottom;
+		strm >> type >> left >> top >> right >> bottom >> bitmapName;
 
 		if (strm)
 		{
@@ -51,6 +59,15 @@ std::unique_ptr<ICanvas> CXmlReader::LoadCanvas(CArchive & ar)
 			{
 				canvas->InsertShape(
 					std::make_shared<CShape>(CRect(left, top, right, bottom), ShapeType::Ellipse), boost::none
+				);
+			}
+			else if (type == "Image")
+			{
+				path imagePath = filePath.branch_path() / fileName / bitmapName;
+
+				HANDLE hBitmap = LoadImage(NULL, imagePath.c_str(), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
+				canvas->InsertShape(
+					std::make_shared<CShape>(CRect(left, top, right, bottom), ShapeType::Image, hBitmap), boost::none
 				);
 			}
 		}

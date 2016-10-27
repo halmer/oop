@@ -143,6 +143,8 @@ void CCanvasView::HandleMouseDown(CPoint const & point)
 
 	m_mousePressPoint = boost::none;
 	m_capturedShape.reset();
+
+	m_mousePressSignal();
 }
 
 void CCanvasView::HandleMouseUp(CPoint const & point)
@@ -196,6 +198,11 @@ void CCanvasView::HandleOnKeyDown(UINT nChar)
 	}
 }
 
+Connection CCanvasView::DoOnMousePress(MousePressSignal::slot_type const & handler)
+{
+	return m_mousePressSignal.connect(handler);
+}
+
 void CCanvasView::SetCanvasCursor(CPoint const & point)
 {
 	if (m_capturedShape)
@@ -247,3 +254,5 @@ void CCanvasView::ChangeCursor(bool isCapturedShape, bool isSelectedControlPoint
 		SetCursor(m_cursorArrow);
 	}
 }
+
+#pragma warning (disable:4503)

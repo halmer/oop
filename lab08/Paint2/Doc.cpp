@@ -37,3 +37,13 @@ bool CDoc::CanRedo() const
 {
 	return m_history.CanRedo();
 }
+
+void CDoc::SaveState()
+{
+	return m_history.SaveState();
+}
+
+bool CDoc::IsModified() const
+{
+	return m_history.IsModified();
+}

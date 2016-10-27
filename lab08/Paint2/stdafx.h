@@ -42,6 +42,7 @@
 #include <boost/optional.hpp>
 #include <boost/range/adaptor/reversed.hpp>
 #include <boost/range/algorithm/find_if.hpp>
+#include <boost/filesystem.hpp>
 #include <vector>
 #include <map>
 #include <sstream>

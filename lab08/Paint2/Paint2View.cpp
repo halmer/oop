@@ -162,7 +162,6 @@ void CPaint2View::OnLButtonDown(UINT nFlags, CPoint point)
 
 	point.Offset(GetDeviceScrollPosition());
 	m_canvasView->HandleMouseDown(point);
-	Invalidate();
 
 	CScrollView::OnLButtonDown(nFlags, point);
 }

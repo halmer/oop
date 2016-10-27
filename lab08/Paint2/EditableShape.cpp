@@ -49,13 +49,6 @@ void CEditableShape::Offset(CPoint const & delta, OffsetType type)
 		break;
 	}
 
-	if (	m_shape->GetType() == ShapeType::Image
-		&& (m_rect.left >= m_rect.right || m_rect.top >= m_rect.bottom))
-	{
-		m_rect = rect;
-		return;
-	}
-
 	if (m_rect != rect)
 	{
 		m_shapeChange(this);

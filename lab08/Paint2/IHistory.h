@@ -21,6 +21,8 @@ public:
 	virtual bool CanUndo() const = 0;
 	virtual bool CanRedo() const = 0;
 	virtual void Reset() = 0;
+	virtual void SaveState() = 0;
+	virtual bool IsModified() const = 0;
 
 	virtual ~IHistory() = default;
 };

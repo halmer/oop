@@ -17,6 +17,8 @@ public:
 	std::shared_ptr<IShapeView> GetShapeAtIndex(size_t index) const override;
 	CRect GetSize() const override;
 
+	Connection DoOnMousePress(MousePressSignal::slot_type const & handler) override;
+
 	void Draw(CDC & dc);
 	void HandleMouseDown(CPoint const & point);
 	void HandleMouseUp(CPoint const & point);
@@ -38,4 +40,5 @@ private:
 	HCURSOR m_cursorSizeAll;
 	HCURSOR m_cursorSizeNWSE;
 	HCURSOR m_cursorSizeNESW;
+	MousePressSignal m_mousePressSignal;
 };

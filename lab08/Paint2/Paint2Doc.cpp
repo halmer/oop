@@ -54,6 +54,8 @@ void CPaint2Doc::Serialize(CArchive & ar)
 	{
 		CXmlWriter writer;
 		writer.SaveCanvas(m_doc->GetCanvas(), ar);
+
+		m_doc->SaveState();
 	}
 	else
 	{
@@ -79,13 +81,13 @@ void CPaint2Doc::SubscribeSignals()
 	auto & editableCanvas = m_doc->GetEditableCanvas();
 
 	editableCanvas.DoOnInsertShape([this](std::shared_ptr<IEditableShape> const & /*shape*/, boost::optional<size_t> /*position*/) {
-		SetModifiedFlag();
+		SetModifiedFlag(m_doc->IsModified());
 	});
 	editableCanvas.DoOnDeleteShape([this](std::shared_ptr<IEditableShape> const & /*shape*/) {
-		SetModifiedFlag();
+		SetModifiedFlag(m_doc->IsModified());
 	});
 	editableCanvas.DoOnChangeShape([this](std::shared_ptr<IEditableShape> const & /*shape*/) {
-		SetModifiedFlag();
+		SetModifiedFlag(m_doc->IsModified());
 	});
 }
 

@@ -15,5 +15,8 @@ public:
 	virtual std::shared_ptr<IShapeView> GetShapeAtIndex(size_t index) const = 0;
 	virtual CRect GetSize() const = 0;
 
+	using MousePressSignal = Signal<void()>;
+	virtual Connection DoOnMousePress(MousePressSignal::slot_type const & handler) = 0;
+
 	virtual ~ICanvasView() = default;
 };
